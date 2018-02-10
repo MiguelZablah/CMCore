@@ -1,15 +1,16 @@
 ﻿using CMCore.Models;
 using CMCore.Models.RelacionClass;
 using Microsoft.EntityFrameworkCore;
+using Type = CMCore.Models.Type;
 
 namespace CMCore.Data
 {
     public class ContentManagerDbContext : DbContext
     {
-        public static string ConnectionString { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public ContentManagerDbContext(DbContextOptions<ContentManagerDbContext> options)
+            : base(options)
         {
-            optionsBuilder.UseSqlServer(ConnectionString);
+
         }
 
         public DbSet<File> Files { get; set; }

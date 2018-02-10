@@ -12,11 +12,11 @@ namespace CMCore.Controllers
     [Route("File/[action]")]
     public class FileController : Controller
     {
-        private ContentManagerDbContext _context;
+        private readonly ContentManagerDbContext _context;
 
-        public FileController()
+        public FileController(ContentManagerDbContext context)
         {
-            _context = new ContentManagerDbContext();
+            _context = context;
         }
 
         // GET file/get
@@ -25,7 +25,7 @@ namespace CMCore.Controllers
         {
             var files = _context.Files.ProjectTo<FileDto>().ToList();
 
-            if (files.Count >= 0)
+            if (files.Count <= 0)
                 return NotFound();
 
             return Ok(files);
