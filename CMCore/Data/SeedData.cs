@@ -1,7 +1,6 @@
 ﻿using CMCore.Models;
 using CMCore.Models.RelacionClass;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,9 +13,9 @@ namespace CMCore.Data
     {
         public static IWebHost SeedDatabase(this IWebHost webHost)
         {
-            //using (var c = new ContentManagerDbContext(new DbContextOptions<ContentManagerDbContext>()))
+            //using (var context = new ContentManagerDbContext(new DbContextOptions<ContentManagerDbContext>()))
             //{
-            //    c.Clubs.Add(new Club());
+            //    TablesToSeed(context);
             //}
 
             using (var scope = webHost.Services.CreateScope())
@@ -25,8 +24,8 @@ namespace CMCore.Data
 
                 try
                 {
-                    var _context = services.GetRequiredService<ContentManagerDbContext>();
-                    TablesToSeed(_context);
+                    var context = services.GetRequiredService<ContentManagerDbContext>();
+                    TablesToSeed(context);
                 }
                 catch (Exception ex)
                 {
@@ -38,87 +37,87 @@ namespace CMCore.Data
             return webHost;
         }
 
-        public static void TablesToSeed(ContentManagerDbContext _context)
+        public static void TablesToSeed(ContentManagerDbContext context)
         {
-            _context.Database.Migrate();
+            //context.Database.Migrate();
 
-            if (!_context.Files.Any())
+            if (!context.Clubs.Any())
             {
-                _context.Files.Add(new File { Name = "FileTest", Description = "Testing a file", ExtensionId = 1 });
-                _context.SaveChanges();
+                context.Clubs.Add(new Club { Name = "Bebes Paradise" });
+                context.SaveChanges();
             }
 
-            if (!_context.Clubs.Any())
+            if (!context.Regions.Any())
             {
-                _context.Clubs.Add(new Club { Name = "Bebes Paradise" });
-                _context.SaveChanges();
+                context.Regions.Add(new Region { Name = "Cenam" });
+                context.SaveChanges();
             }
 
-            if (!_context.Companies.Any())
+            if (!context.Companies.Any())
             {
-                _context.Companies.Add(new Companie { Name = "SVA" });
-                _context.SaveChanges();
+                context.Companies.Add(new Companie { Name = "SVA" });
+                context.SaveChanges();
             }
 
-            if (!_context.Countries.Any())
+            if (!context.Countries.Any())
             {
-                _context.Countries.Add(new Countrie { Name = "Costa Rica", RegionId = 1 });
-                _context.SaveChanges();
+                context.Countries.Add(new Countrie { Name = "Costa Rica", RegionId = 1 });
+                context.SaveChanges();
             }
 
 
-            if (!_context.Extensions.Any())
+            if (!context.Extensions.Any())
             {
-                _context.Extensions.Add(new Extension { Name = "JPG" });
-                _context.SaveChanges();
+                context.Extensions.Add(new Extension { Name = "JPG" });
+                context.SaveChanges();
             }
 
-            if (!_context.Regions.Any())
+            if (!context.Tags.Any())
             {
-                _context.Regions.Add(new Region { Name = "Cenam" });
-                _context.SaveChanges();
+                context.Tags.Add(new Tag { Name = "Sexy" });
+                context.SaveChanges();
             }
 
-            if (!_context.Tags.Any())
+            if (!context.Types.Any())
             {
-                _context.Tags.Add(new Tag { Name = "Sexy" });
-                _context.SaveChanges();
+                context.Types.Add(new Type { Name = "Mainstream" });
+                context.SaveChanges();
             }
 
-            if (!_context.Types.Any())
+            if (!context.Files.Any())
             {
-                _context.Types.Add(new Type { Name = "Mainstream" });
-                _context.SaveChanges();
+                context.Files.Add(new File { Name = "FileTest", Description = "Testing a file", ExtensionId = 1 });
+                context.SaveChanges();
             }
 
-            if (!_context.FileClubs.Any())
+            if (!context.FileClubs.Any())
             {
-                _context.FileClubs.Add(new FileClub { FileId = 1, ClubId = 1 });
-                _context.SaveChanges();
+                context.FileClubs.Add(new FileClub { FileId = 1, ClubId = 1 });
+                context.SaveChanges();
             }
 
-            if (!_context.FileCompanies.Any())
+            if (!context.FileCompanies.Any())
             {
-                _context.FileCompanies.Add(new FileCompanie { FileId = 1, CompanieId = 1 });
-                _context.SaveChanges();
+                context.FileCompanies.Add(new FileCompanie { FileId = 1, CompanieId = 1 });
+                context.SaveChanges();
             }
 
-            if (!_context.FileTags.Any())
+            if (!context.FileTags.Any())
             {
-                _context.FileTags.Add(new FileTag { FileId = 1, TagId = 1 });
-                _context.SaveChanges();
+                context.FileTags.Add(new FileTag { FileId = 1, TagId = 1 });
+                context.SaveChanges();
             }
 
-            if (!_context.ClubRegions.Any())
+            if (!context.ClubRegions.Any())
             {
-                _context.ClubRegions.Add(new ClubRegion { ClubId = 1, RegionId = 1 });
-                _context.SaveChanges();
+                context.ClubRegions.Add(new ClubRegion { ClubId = 1, RegionId = 1 });
+                context.SaveChanges();
             }
 
-            if (!_context.ClubTypes.Any())
+            if (!context.ClubTypes.Any())
             {
-                _context.ClubTypes.Add(new ClubType { ClubId = 1, TypeId = 1 });
-                _context.SaveChanges();
+                context.ClubTypes.Add(new ClubType { ClubId = 1, TypeId = 1 });
+                context.SaveChanges();
             }
         }
     }
