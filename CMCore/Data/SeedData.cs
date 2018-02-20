@@ -13,11 +13,6 @@ namespace CMCore.Data
     {
         public static IWebHost SeedDatabase(this IWebHost webHost)
         {
-            //using (var context = new ContentManagerDbContext(new DbContextOptions<ContentManagerDbContext>()))
-            //{
-            //    TablesToSeed(context);
-            //}
-
             using (var scope = webHost.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;

@@ -21,7 +21,7 @@ namespace CMCore
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ContentManagerDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("LocalSqlServer")));
+                options.UseMySql(Configuration.GetConnectionString("LocalMySqlServer")));
             services.AddMvc();
             Mapper.Initialize(cfg => cfg.AddProfile<AutoMapperProfile>());
         }
