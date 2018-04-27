@@ -8,6 +8,8 @@ namespace CMCore.DTO
 
         public string Name { get; set; }
 
+        public string Url { get; set; }
+
         public IList<TypeDto> Types { get; set; }
 
         public IList<RegionDto> Regions { get; set; }

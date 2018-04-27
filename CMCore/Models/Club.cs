@@ -16,6 +16,8 @@ namespace CMCore.Models
 
         public string Name { get; set; }
 
+        public string Url { get; set; }
+
         public IList<FileClub> FileClubs { get; set; }
 
         public IList<ClubType> ClubTypes { get; set; }

@@ -38,7 +38,7 @@ namespace CMCore.Data
 
             if (!context.Clubs.Any())
             {
-                context.Clubs.Add(new Club { Name = "Bebes Paradise" });
+                context.Clubs.Add(new Club { Name = "Bebes Paradise", Url = "bebesParadise.com"});
                 context.SaveChanges();
             }
 
@@ -63,7 +63,7 @@ namespace CMCore.Data
 
             if (!context.Extensions.Any())
             {
-                context.Extensions.Add(new Extension { Name = "JPG" });
+                context.Extensions.Add(new Extension { Name = "jpg" });
                 context.SaveChanges();
             }
 

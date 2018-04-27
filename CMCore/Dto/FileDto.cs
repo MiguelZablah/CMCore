@@ -12,7 +12,8 @@ namespace CMCore.DTO
 
         public IList<TagDto> Tags { get; set; }
 
-        public ExtensionDto Extension { get; set; }
+        public int ExtensionId { get; set; }
+        public ExtensionDto Extension{ get; set; }
 
         public IList<CompanieDto> Companies { get; set; }
 
