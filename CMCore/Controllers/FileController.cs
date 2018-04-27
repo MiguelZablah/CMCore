@@ -19,7 +19,7 @@ using Type = CMCore.Models.Type;
 namespace CMCore.Controllers
 {
     [Produces("application/json")]
-    [Route("File/[action]")]
+    [Route("File/")]
     [EnableCors("AllowSpecificOrigin")]
     public class FileController : Controller
     {
@@ -34,7 +34,7 @@ namespace CMCore.Controllers
             _context = context;
         }
 
-        // GET file/get
+        // GET File/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
@@ -51,7 +51,7 @@ namespace CMCore.Controllers
             return Ok(files);
         }
 
-        // GET file/get/1
+        // GET File/id
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -63,8 +63,35 @@ namespace CMCore.Controllers
             return Ok(file);
         }
 
-        // Put file/edit/id
-        [HttpPut("{id}")]
+        //GET File/id/download
+        [HttpGet("{id}/download")]
+        public async Task<IActionResult> Download(int id)
+        {
+            var fileInDb = await _context.Files.FindAsync(id);
+
+            if (fileInDb == null)
+                return NotFound();
+
+            if (String.IsNullOrEmpty(fileInDb.PathName))
+                return BadRequest("File path name nor found");
+
+            var filePath = Path.Combine(_host.WebRootPath, "FilesUploads", fileInDb.PathName);
+
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(filePath, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+
+            if (String.IsNullOrEmpty(_fileSettings.GetContentType(fileInDb.PathName)))
+                return BadRequest("No content Type Found");
+
+            memory.Position = 0;
+            return File(memory, _fileSettings.GetContentType(fileInDb.PathName), Path.GetFileName(filePath));
+        }
+
+        // Patch File/id
+        [HttpPatch("{id}")]
         public IActionResult Edit(int id, [FromBody] FileDto fileDto)
         {
             if (fileDto == null)
@@ -491,34 +518,7 @@ namespace CMCore.Controllers
             return Ok(file);
         }
 
-        //GET file/download/id
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Download(int id)
-        {
-            var fileInDb = await _context.Files.FindAsync(id);
-
-            if (fileInDb == null)
-                return NotFound();
-
-            if (String.IsNullOrEmpty(fileInDb.PathName))
-                return BadRequest("File path name nor found");
-
-            var filePath = Path.Combine(_host.WebRootPath, "FilesUploads", fileInDb.PathName);
-
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(filePath, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-
-            if (String.IsNullOrEmpty(_fileSettings.GetContentType(fileInDb.PathName)))
-                return BadRequest("No content Type Found");
-
-            memory.Position = 0;
-            return File(memory, _fileSettings.GetContentType(fileInDb.PathName), Path.GetFileName(filePath));
-        }
-
-        // Delete file/delete/id
+        // Delete File/id
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -539,7 +539,7 @@ namespace CMCore.Controllers
             return Ok("File Deleted: " + id);
         }
 
-        // Delete file/Upload/
+        // Delete File/
         [HttpPost]
         public async Task<IActionResult> Upload(IFormFile file, string fileName)
         {

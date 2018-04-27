@@ -16,7 +16,7 @@ using Type = CMCore.Models.Type;
 namespace CMCore.Controllers
 {
     [Produces("application/json")]
-    [Route("club/[action]")]
+    [Route("club/")]
     [EnableCors("AllowSpecificOrigin")]
     public class ClubController : Controller
     {
@@ -27,7 +27,7 @@ namespace CMCore.Controllers
             _context = context;
         }
 
-        // GET club/get
+        // GET club/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
@@ -44,7 +44,7 @@ namespace CMCore.Controllers
             return Ok(clubs);
         }
 
-        // GET club/get/1
+        // GET club/id
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -56,7 +56,8 @@ namespace CMCore.Controllers
             return Ok(clubs);
         }
 
-        [HttpPut("{id}")]
+        // PATCH club/id
+        [HttpPatch("{id}")]
         public IActionResult Edit(int id, [FromBody] ClubDto clubDto)
         {
             if (clubDto == null)
@@ -240,7 +241,7 @@ namespace CMCore.Controllers
             return Ok(club);
         }
 
-        // Delete club/delete/id
+        // Delete club/id
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -255,7 +256,7 @@ namespace CMCore.Controllers
             return Ok("Club Deleted: " + id);
         }
 
-        // Post club/new
+        // POST club/
         [HttpPost]
         public async Task<IActionResult> New([FromBody] ClubDto clubDto)
         {

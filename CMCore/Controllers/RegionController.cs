@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CMCore.Controllers
 {
     [Produces("application/json")]
-    [Route("region/[action]")]
+    [Route("region/")]
     [EnableCors("AllowSpecificOrigin")]
     public class RegionController : Controller
     {
@@ -25,7 +25,7 @@ namespace CMCore.Controllers
             _context = context;
         }
 
-        // GET region/get
+        // GET region/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
@@ -42,7 +42,7 @@ namespace CMCore.Controllers
             return Ok(regions);
         }
 
-        // GET region/get
+        // GET region/id
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -54,8 +54,8 @@ namespace CMCore.Controllers
             return Ok(region);
         }
 
-        // Put region/edit/id
-        [HttpPut("{id}")]
+        // PATCH region/id
+        [HttpPatch("{id}")]
         public IActionResult Edit(int id, [FromBody] RegionDto regionDto)
         {
             if (regionDto == null)
@@ -133,7 +133,7 @@ namespace CMCore.Controllers
             return Ok("Region Deleted: " + id);
         }
 
-        // Post region/new
+        // POST region/
         [HttpPost]
         public async Task<IActionResult> New([FromBody] RegionDto regionDto)
         {

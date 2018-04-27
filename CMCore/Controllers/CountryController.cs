@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CMCore.Controllers
 {
     [Produces("application/json")]
-    [Route("country/[action]")]
+    [Route("country/")]
     [EnableCors("AllowSpecificOrigin")]
     public class CountryController : Controller
     {
@@ -25,7 +25,7 @@ namespace CMCore.Controllers
             _context = context;
         }
 
-        // GET country/get
+        // GET country/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
@@ -42,7 +42,7 @@ namespace CMCore.Controllers
             return Ok(countries);
         }
 
-        // GET country/get
+        // GET country/
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -54,8 +54,8 @@ namespace CMCore.Controllers
             return Ok(country);
         }
 
-        // Put country/edit/id
-        [HttpPut("{id}")]
+        // Patch country/id
+        [HttpPatch("{id}")]
         public IActionResult Edit(int id, [FromBody] CountrieDto countryDto)
         {
             if (countryDto == null)
@@ -88,7 +88,7 @@ namespace CMCore.Controllers
             return Ok(country);
         }
 
-        // Delete country/delete/id
+        // Delete country/id
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -103,7 +103,7 @@ namespace CMCore.Controllers
             return Ok("Country Deleted: " + id);
         }
 
-        // Post country/new
+        // Post country/
         [HttpPost]
         public async Task<IActionResult> New([FromBody] CountrieDto countryDto)
         {

@@ -14,7 +14,7 @@ using Type = CMCore.Models.Type;
 namespace CMCore.Controllers
 {
     [Produces("application/json")]
-    [Route("type/[action]")]
+    [Route("type/")]
     [EnableCors("AllowSpecificOrigin")]
     public class TypeController : Controller
     {
@@ -25,7 +25,7 @@ namespace CMCore.Controllers
             _context = context;
         }
 
-        // GET type/get
+        // GET type/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
@@ -42,7 +42,7 @@ namespace CMCore.Controllers
             return Ok(types);
         }
 
-        // GET type/get/1
+        // GET type/id
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -54,7 +54,8 @@ namespace CMCore.Controllers
             return Ok(type);
         }
 
-        [HttpPut("{id}")]
+        // PATCH /type/id
+        [HttpPatch("{id}")]
         public IActionResult Edit(int id, [FromBody] TypeDto typeDto)
         {
             var typeInDb = _context.Types.SingleOrDefault(t => t.Id == id);
@@ -85,7 +86,7 @@ namespace CMCore.Controllers
             return Ok(type);
         }
 
-        // Delete type/delete/id
+        // DELETE type/delete/id
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -100,7 +101,7 @@ namespace CMCore.Controllers
             return Ok("Type Deleted: " + id);
         }
 
-        // Post type/new
+        // POST type/new
         [HttpPost]
         public async Task<IActionResult> New([FromBody] TypeDto typeDto)
         {

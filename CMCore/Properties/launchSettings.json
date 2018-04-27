@@ -11,7 +11,7 @@
     "CMCore": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "file/get",
+      "launchUrl": "file",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

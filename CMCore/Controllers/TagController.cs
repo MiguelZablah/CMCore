@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CMCore.Controllers
 {
     [Produces("application/json")]
-    [Route("tag/[action]")]
+    [Route("tag/")]
     [EnableCors("AllowSpecificOrigin")]
     public class TagController : Controller
     {
@@ -25,7 +25,7 @@ namespace CMCore.Controllers
             _context = context;
         }
 
-        // GET tag/get
+        // GET tag/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
@@ -42,7 +42,7 @@ namespace CMCore.Controllers
             return Ok(tags);
         }
 
-        // GET tag/get
+        // GET tag/id
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
@@ -54,8 +54,8 @@ namespace CMCore.Controllers
             return Ok(tag);
         }
 
-        // Put tag/edit/id
-        [HttpPut("{id}")]
+        // PATCH tag/id
+        [HttpPatch("{id}")]
         public IActionResult Edit(int id, [FromBody] TagDto tagDto)
         {
             if (tagDto == null)
@@ -89,7 +89,7 @@ namespace CMCore.Controllers
             return Ok(tag);
         }
 
-        // Delete tag/delete/id
+        // DELETE tag/id
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
@@ -104,7 +104,7 @@ namespace CMCore.Controllers
             return Ok("Tag Deleted: " + id);
         }
 
-        // Post tag/new
+        // POST tag/
         [HttpPost]
         public async Task<IActionResult> New([FromBody] TagDto tagDto)
         {
