@@ -46,23 +46,16 @@ namespace CMCore.Data
                 .HasKey(cr => new { cr.ClubId, cr.RegionId });
 
             // One to Many
-            modelBuilder.Entity<File>()
-                .HasOne(f => f.Extension)
-                .WithMany(e => e.Files)
+            modelBuilder.Entity<Extension>()
+                .HasMany(e => e.Files)
+                .WithOne(f => f.Extension)
                 .HasForeignKey(f => f.ExtensionId);
 
-<<<<<<< HEAD
             modelBuilder.Entity<Region>()
                 .HasMany(c => c.Countries)
                 .WithOne(c => c.Region)
                 .HasForeignKey(c => c.RegionId).IsRequired(false);
 
-=======
-            modelBuilder.Entity<Countrie>()
-                .HasOne(c => c.Region)
-                .WithMany(c => c.Countries)
-                .HasForeignKey(c => c.RegionId);
->>>>>>> parent of cd36e48... Works with big files
         }
 
     }

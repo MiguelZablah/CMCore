@@ -11,14 +11,15 @@ using System;
 namespace CMCore.Migrations
 {
     [DbContext(typeof(ContentManagerDbContext))]
-    partial class ContentManagerDbContexModelSnapshot : ModelSnapshot
+    [Migration("20180223171234_addPropertieToFile")]
+    partial class addPropertieToFile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn)
-                .HasAnnotation("ProductVersion", "2.0.2-rtm-10011");
+                .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
 
             modelBuilder.Entity("CMCore.Models.Club", b =>
                 {
@@ -26,8 +27,6 @@ namespace CMCore.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Name");
-
-                    b.Property<string>("Url");
 
                     b.HasKey("Id");
 
@@ -53,7 +52,7 @@ namespace CMCore.Migrations
 
                     b.Property<string>("Name");
 
-                    b.Property<int?>("RegionId");
+                    b.Property<int>("RegionId");
 
                     b.HasKey("Id");
 
@@ -199,7 +198,8 @@ namespace CMCore.Migrations
                 {
                     b.HasOne("CMCore.Models.Region", "Region")
                         .WithMany("Countries")
-                        .HasForeignKey("RegionId");
+                        .HasForeignKey("RegionId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CMCore.Models.File", b =>

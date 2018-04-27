@@ -81,7 +81,7 @@ namespace CMCore.Data
 
             if (!context.Files.Any())
             {
-                context.Files.Add(new File { Name = "FileTest", Description = "Testing a file", ExtensionId = 1 });
+                context.Files.Add(new File { Name = "FileTest", Description = "Testing a file", PathName = "test.jpg", ExtensionId = 1 });
                 context.SaveChanges();
             }
 

@@ -2,6 +2,7 @@
 using CMCore.DTO;
 using CMCore.Models;
 using System.Linq;
+using Type = CMCore.Models.Type;
 
 namespace CMCore.Data
 {
@@ -33,7 +34,7 @@ namespace CMCore.Data
 
             // Dto to Domain
             CreateMap<FileDto, File>()
-                .ForMember(f => f.Id, opt => opt.Ignore());
+                .ForMember(t => t.Id, opt => opt.Ignore());
 
             CreateMap<TagDto, Tag>()
                 .ForMember(t => t.Id, opt => opt.Ignore());
@@ -56,5 +57,6 @@ namespace CMCore.Data
             CreateMap<CompanieDto, Companie>()
                 .ForMember(c => c.Id, opt => opt.Ignore());
         }
+
     }
 }

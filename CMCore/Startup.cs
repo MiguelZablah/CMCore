@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CMCore.Data;
+using CMCore.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,7 +25,21 @@ namespace CMCore
             services.AddDbContext<ContentManagerDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("LocalMySqlServer")));
             services.AddMvc();
-            Mapper.Initialize(cfg => cfg.AddProfile<AutoMapperProfile>());
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueLengthLimit = int.MaxValue;
+                options.MultipartBodyLengthLimit = int.MaxValue;
+                options.MemoryBufferThreshold = int.MaxValue;
+            });
+            services.Configure<FileSettings>(Configuration.GetSection("FileSettings"));
+            services.AddCors(option =>
+            {
+                option.AddPolicy("AllowSpecificOrigin", builder =>
+                {
+                    builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                });
+            });
+            services.AddAutoMapper();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +51,7 @@ namespace CMCore
             }
 
             app.UseMvc();
+            app.UseCors("AllowAllHeaders");
         }
     }
 }
