@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CMCore.Data;
+using CMCore.Helpers;
 using CMCore.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

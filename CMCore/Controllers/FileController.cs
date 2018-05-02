@@ -12,6 +12,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CMCore.Helpers;
 using CMCore.Models.RelacionClass;
 using File = CMCore.Models.File;
 using Type = CMCore.Models.Type;
