@@ -46,6 +46,7 @@ namespace CMCore
             services.AddTransient<ITagService, TagService>();
             services.AddTransient<ICompanieService, CompanieService>();
             services.AddTransient<ICountryService, CountryService>();
+            services.AddTransient<IRegionService, RegionService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

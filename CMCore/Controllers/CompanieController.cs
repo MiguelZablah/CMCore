@@ -38,9 +38,7 @@ namespace CMCore.Controllers
         {
             var companieInDb = _companieService.Exist(id);
             if (companieInDb == null)
-            {
                 return BadRequest("Companie dosen't exist!");
-            }
 
             return Ok(Mapper.Map<Companie, CompanieDto>(companieInDb));
         }
@@ -51,21 +49,15 @@ namespace CMCore.Controllers
         {
             var companieInDb = _companieService.Exist(id);
             if (companieInDb == null)
-            {
                 return BadRequest("Companie dosen't exist!");
-            }
 
             var errorMsg = _companieService.Validate(companieDto);
             if (errorMsg != null)
-            {
                 return BadRequest(errorMsg);
-            }
 
             var errMsg = _companieService.Compare(companieInDb, companieDto);
             if (errMsg != null)
-            {
                 return BadRequest(errMsg);
-            }
 
             var companieSave = _companieService.Edit(companieInDb, companieDto);
 
@@ -78,15 +70,11 @@ namespace CMCore.Controllers
         {
             var companieInDb = _companieService.Exist(id);
             if (companieInDb == null)
-            {
                 return BadRequest("Companie dosen't exist!");
-            }
 
             var delete = _companieService.Erase(companieInDb);
             if (!delete)
-            {
                 return BadRequest("Companie not deleted!");
-            }
 
             return Ok("Companie Deleted: " + companieInDb.Name);
         }
@@ -97,9 +85,7 @@ namespace CMCore.Controllers
         {
             var errorMsg = _companieService.Validate(companieDto);
             if (errorMsg != null)
-            {
                 return BadRequest(errorMsg);
-            }
 
             var newCompanie = await _companieService.SaveNew(companieDto);
             return Ok(newCompanie);

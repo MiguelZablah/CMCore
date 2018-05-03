@@ -14,5 +14,7 @@ namespace CMCore.Interfaces
         string Compare(Countrie countrieInDb, CountrieDto countrieDto);
         bool Erase(Countrie countrieInDb);
         Task<CountrieDto> SaveNew(CountrieDto countrieDto);
+        Countrie CreateNew(CountrieDto countrieDto);
+        string EditSaveRegionR(CountrieDto countrieDto, Region regionInDb);
     }
 }

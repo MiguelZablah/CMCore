@@ -38,9 +38,7 @@ namespace CMCore.Controllers
         {
             var tagInDb = _tagService.Exist(id);
             if (tagInDb == null)
-            {
                 return BadRequest("Tag dosen't exist!");
-            }
 
             return Ok(Mapper.Map<Tag, TagDto>(tagInDb));
         }
@@ -51,21 +49,15 @@ namespace CMCore.Controllers
         {
             var tagInDb = _tagService.Exist(id);
             if (tagInDb == null)
-            {
                 return BadRequest("Tag dosen't exist!");
-            }
 
             var errorMsg = _tagService.Validate(tagDto);
             if (errorMsg != null)
-            {
                 return BadRequest(errorMsg);
-            }
 
             var errMsg = _tagService.Compare(tagInDb, tagDto);
             if (errMsg != null)
-            {
                 return BadRequest(errMsg);
-            }
 
             var tagSave = _tagService.Edit(tagInDb, tagDto);
 
@@ -78,15 +70,11 @@ namespace CMCore.Controllers
         {
             var tagInDb = _tagService.Exist(id);
             if (tagInDb == null)
-            {
                 return BadRequest("Tag dosen't exist!");
-            }
 
             var delete = _tagService.Erase(tagInDb);
             if (!delete)
-            {
                 return BadRequest("Tag not deleted!");
-            }
 
             return Ok("Tag Deleted: " + tagInDb.Name);
         }
@@ -97,9 +85,7 @@ namespace CMCore.Controllers
         {
             var errorMsg = _tagService.Validate(tagDto);
             if (errorMsg != null)
-            {
                 return BadRequest(errorMsg);
-            }
 
             var newTag = await _tagService.SaveNew(tagDto);
             return Ok(newTag);

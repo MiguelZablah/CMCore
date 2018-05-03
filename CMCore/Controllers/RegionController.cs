@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using CMCore.Data;
 using CMCore.DTO;
+using CMCore.Interfaces;
 using CMCore.Models;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CMCore.Controllers
@@ -18,25 +13,22 @@ namespace CMCore.Controllers
     [EnableCors("AllowSpecificOrigin")]
     public class RegionController : Controller
     {
-        private readonly ContentManagerDbContext _context;
+        private readonly IRegionService _regionService;
+        private readonly ICountryService _countryService;
 
-        public RegionController(ContentManagerDbContext context)
+        public RegionController(IRegionService regionService, ICountryService countryService)
         {
-            _context = context;
+            _regionService = regionService;
+            _countryService = countryService;
         }
 
         // GET region/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
-            var regionsQuery = _context.Regions.ProjectTo<RegionDto>();
+            var regions = _regionService.FindAll(name);
 
-            if(!String.IsNullOrWhiteSpace(name))
-                regionsQuery = regionsQuery.Where(f => f.Name.ToLower().Contains(name));
-
-            var regions = regionsQuery.ToList();
-
-            if (regions.Count <= 0)
+            if (regions == null)
                 return BadRequest("No Regions");
 
             return Ok(regions);
@@ -46,144 +38,83 @@ namespace CMCore.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var region = _context.Regions.ProjectTo<RegionDto>().SingleOrDefault(r => r.Id == id);
+            var regionInDb = _regionService.Exist(id);
+            if (regionInDb == null)
+                return BadRequest("Region dosen't exist!");
 
-            if (region == null)
-                return BadRequest("Region not found");
-
-            return Ok(region);
+            return Ok(Mapper.Map<Region, RegionDto>(regionInDb));
         }
 
         // PATCH region/id
         [HttpPatch("{id}")]
         public IActionResult Edit(int id, [FromBody] RegionDto regionDto)
         {
-            if (regionDto == null)
-                return BadRequest("Did you realy send a region?");
-
-            var regionInDb = _context.Regions.SingleOrDefault(r => r.Id == id);
-
+            var regionInDb = _regionService.Exist(id);
             if (regionInDb == null)
-                return NotFound();
+                return BadRequest("Region dosen't exist!");
 
-            if (!String.IsNullOrEmpty(regionDto.Name))
-            {
-                if (regionInDb.Name.ToLower() == regionDto.Name.ToLower())
-                    return BadRequest("Same name, not changes made");
+            var errorMsg = _regionService.Validate(regionDto);
+            if (errorMsg != null)
+                return BadRequest(errorMsg);
 
-                if (_context.Regions.Any(t => t.Name.ToLower() == regionDto.Name.ToLower()))
-                    return BadRequest("A Tag with that name already exist!");
-            }
-
-            // Keep name if not send
-            if (String.IsNullOrEmpty(regionDto.Name))
-                regionDto.Name = regionInDb.Name;
+            var errMsg = _regionService.Compare(regionInDb, regionDto);
+            if (errMsg != null)
+                return BadRequest(errMsg);
 
             // Countrie check
             if (regionDto.Countries != null)
             {
                 foreach (var country in regionDto.Countries)
                 {
-                    if (String.IsNullOrEmpty(country.Name))
-                        return BadRequest("Country with no name! That is bad!");
-
-                    var existingCountry = _context.Countries.SingleOrDefault(ec => ec.Name.ToLower() == country.Name.ToLower());
-                    if (existingCountry == null)
-                    {
-                        var createCountry = new Countrie
-                        {
-                            Name = country.Name,
-                            RegionId = regionInDb.Id
-                        };
-                        _context.Countries.Add(createCountry);
-                    }
-                    else
-                    {
-                        var regionHasCountry = regionInDb.Countries.Any(cr => cr.RegionId == existingCountry.RegionId);
-                        if (regionHasCountry)
-                        {
-                            existingCountry.RegionId = regionInDb.Id;
-                        }
-                    }
+                    var countryErMsg = _countryService.EditSaveRegionR(country, regionInDb);
+                    if (countryErMsg != null)
+                        return BadRequest(countryErMsg);
                 }
             }
 
-            Mapper.Map(regionDto, regionInDb);
+            var regionSave = _regionService.Edit(regionInDb, regionDto);
 
-            _context.SaveChanges();
-
-            // Return new file
-            var region = _context.Regions.ProjectTo<RegionDto>().SingleOrDefault(f => f.Id == regionInDb.Id);
-
-            return Ok(region);
+            return Ok(regionSave);
         }
 
         // Delete region/delete/id
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var regionInDb = _context.Regions.SingleOrDefault(c => c.Id == id);
-
+            var regionInDb = _regionService.Exist(id);
             if (regionInDb == null)
-                return NotFound();
+                return BadRequest("Region dosen't exist!");
 
-            _context.Regions.Remove(regionInDb);
-            _context.SaveChanges();
+            var delete = _regionService.Erase(regionInDb);
+            if (!delete)
+                return BadRequest("Region not deleted!");
 
-            return Ok("Region Deleted: " + id);
+            return Ok("Region Deleted: " + regionInDb.Name);
         }
 
         // POST region/
         [HttpPost]
         public async Task<IActionResult> New([FromBody] RegionDto regionDto)
         {
-            if (regionDto == null)
-                return BadRequest("Did you send one Region or somthing else?!");
+            var errorMsg = _regionService.Validate(regionDto);
+            if (errorMsg != null)
+                return BadRequest(errorMsg);
 
-            if (String.IsNullOrEmpty(regionDto.Name))
-                return BadRequest("Not Region name send!");
+            var newRegion = _regionService.CreateNew(regionDto);
 
-            if (_context.Regions.Any(t => t.Name.ToLower() == regionDto.Name.ToLower()))
-                return BadRequest("Region name already exist! No duplicates plz!");
-
-            var createdRegion = new Region
-            {
-                Name = regionDto.Name
-            };
-            _context.Regions.Add(createdRegion);
-            var newRegion = createdRegion;
-
-            // Countries check
+            // Countrie check
             if (regionDto.Countries != null)
             {
                 foreach (var country in regionDto.Countries)
                 {
-                    if (String.IsNullOrEmpty(country.Name))
-                        return BadRequest("Country with no name! That is bad!");
-
-                    var existingCountry = _context.Countries.SingleOrDefault(ec => ec.Name.ToLower() == country.Name.ToLower());
-                    if (existingCountry == null)
-                    {
-                        var createCountry = new Countrie
-                        {
-                            Name = country.Name,
-                            RegionId = newRegion.Id
-                        };
-                        _context.Countries.Add(createCountry);
-                    }
-                    else
-                    {
-                        var regionHasCountry = newRegion.Countries.Any(cr => cr.RegionId == existingCountry.RegionId);
-                        if (!regionHasCountry)
-                        {
-                            existingCountry.RegionId = newRegion.Id;
-                        }
-                    }
+                    var countryErMsg = _countryService.EditSaveRegionR(country, newRegion);
+                    if (countryErMsg != null)
+                        return BadRequest(countryErMsg);
                 }
             }
 
-            await _context.SaveChangesAsync();
-            return Ok(Mapper.Map<Region, RegionDto>(newRegion));
+            var regionNew = await _regionService.Save(newRegion);
+            return Ok(regionNew);
         }
     }
 }

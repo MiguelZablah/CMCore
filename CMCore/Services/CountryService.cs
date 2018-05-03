@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -22,22 +21,29 @@ namespace CMCore.Services
 
         public List<CountrieDto> FindAll(string name)
         {
-            var CountriesQuery = _context.Countries.ProjectTo<CountrieDto>();
+            var countriesQuery = _context.Countries.ProjectTo<CountrieDto>();
 
             if (!string.IsNullOrWhiteSpace(name))
-                CountriesQuery = CountriesQuery.Where(f => f.Name.ToLower().Contains(name));
+                countriesQuery = countriesQuery.Where(f => f.Name.ToLower().Contains(name));
 
-            var Countries = CountriesQuery.ToList();
+            var countries = countriesQuery.ToList();
 
-            if (Countries.Count <= 0)
+            if (countries.Count <= 0)
                 return null;
 
-            return Countries;
+            return countries;
         }
 
         public Countrie Exist(int id)
         {
             var countrieInDb = _context.Countries.SingleOrDefault(c => c.Id == id);
+
+            return countrieInDb;
+        }
+
+        public Countrie ExistName(string name)
+        {
+            var countrieInDb = _context.Countries.SingleOrDefault(c => c.Name.ToLower() == name.ToLower());
 
             return countrieInDb;
         }
@@ -73,9 +79,46 @@ namespace CMCore.Services
 
             _context.SaveChanges();
 
-            var Countrie = _context.Countries.ProjectTo<CountrieDto>().SingleOrDefault(f => f.Id == countrieInDb.Id);
+            var countrie = _context.Countries.ProjectTo<CountrieDto>().SingleOrDefault(f => f.Id == countrieInDb.Id);
 
-            return Countrie;
+            return countrie;
+        }
+
+        public string EditSaveRegionR(CountrieDto countrieDto, Region regionInDb)
+        {
+            var countrieInDb = ExistName(countrieDto.Name);
+            if (countrieInDb == null)
+            {
+                var createCountry = new Countrie
+                {
+                    Name = countrieDto.Name,
+                    RegionId = regionInDb.Id
+                };
+                _context.Countries.Add(createCountry);
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(countrieDto.Name))
+                return "You send a null or empty countrie!";
+
+            var regionHasCountry = regionInDb.Countries.SingleOrDefault(cr => cr.RegionId == countrieInDb.RegionId);
+            if (regionHasCountry == null)
+            {
+                countrieInDb.RegionId = regionInDb.Id;
+            }
+
+            return null;
+
+        }
+
+        public Countrie CreateNew(CountrieDto countrieDto)
+        {
+            var newCountrie = new Countrie
+            {
+                Name = countrieDto.Name
+            };
+            _context.Countries.Add(newCountrie);
+            return newCountrie;
         }
 
         public async Task<CountrieDto> SaveNew(CountrieDto countrieDto)

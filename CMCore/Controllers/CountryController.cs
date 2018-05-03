@@ -1,9 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
@@ -42,9 +38,7 @@ namespace CMCore.Controllers
         {
             var countrieInDb = _countryService.Exist(id);
             if (countrieInDb == null)
-            {
                 return BadRequest("Country dosen't exist!");
-            }
 
             return Ok(Mapper.Map<Countrie, CountrieDto>(countrieInDb));
         }
@@ -55,21 +49,15 @@ namespace CMCore.Controllers
         {
             var countrieInDb = _countryService.Exist(id);
             if (countrieInDb == null)
-            {
                 return BadRequest("Country dosen't exist!");
-            }
 
             var errorMsg = _countryService.Validate(countrieDto);
             if (errorMsg != null)
-            {
                 return BadRequest(errorMsg);
-            }
 
             var errMsg = _countryService.Compare(countrieInDb, countrieDto);
             if (errMsg != null)
-            {
                 return BadRequest(errMsg);
-            }
 
             var countrieSave = _countryService.Edit(countrieInDb, countrieDto);
 
@@ -82,15 +70,11 @@ namespace CMCore.Controllers
         {
             var countrieInDb = _countryService.Exist(id);
             if (countrieInDb == null)
-            {
                 return BadRequest("Country dosen't exist!");
-            }
 
             var delete = _countryService.Erase(countrieInDb);
             if (!delete)
-            {
                 return BadRequest("Country not deleted!");
-            }
 
             return Ok("Country Deleted: " + countrieInDb.Name);
         }
@@ -101,9 +85,7 @@ namespace CMCore.Controllers
         {
             var errorMsg = _countryService.Validate(countrieDto);
             if (errorMsg != null)
-            {
                 return BadRequest(errorMsg);
-            }
 
             var countrieNew = await _countryService.SaveNew(countrieDto);
             return Ok(countrieNew);
