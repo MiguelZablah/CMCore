@@ -41,19 +41,27 @@ namespace CMCore.Services
             return tagInDb;
         }
 
-        public string Validate(TagDto tagDto, Tag tagInDb = null)
-        {
+        public string Validate(TagDto tagDto) {
 
             if (!string.IsNullOrEmpty(tagDto.Name))
             {
-                if (tagInDb != null && tagInDb.Name.ToLower() == tagDto.Name.ToLower())
-                    return "Same name, not changes made";
-
                 if (_context.Tags.Any(t => t.Name.ToLower() == tagDto.Name.ToLower()))
                     return "A Tag with that name already exist!";
             }
 
             return string.IsNullOrEmpty(tagDto.Name) ? "You send a null or empty string!" : null;
+        }
+
+        public string Compare(Tag tagInDb, TagDto tagDto)
+        {
+            if (!string.IsNullOrEmpty(tagDto.Name))
+            {
+                if (tagInDb != null && tagInDb.Name.ToLower() == tagDto.Name.ToLower())
+                    return "Same name, not changes made";
+
+            }
+
+            return null;
         }
 
         public TagDto Edit(Tag tagInDb, TagDto tagDto)

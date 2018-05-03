@@ -54,10 +54,16 @@ namespace CMCore.Controllers
                 return BadRequest("Tag dosen't exist!");
             }
 
-            var errorMsg = _tagService.Validate(tagDto, tagInDb);
+            var errorMsg = _tagService.Validate(tagDto);
             if (errorMsg != null)
             {
                 return BadRequest(errorMsg);
+            }
+
+            var errMsg = _tagService.Compare(tagInDb, tagDto);
+            if (errMsg != null)
+            {
+                return BadRequest(errMsg);
             }
 
             var tagSave = _tagService.Edit(tagInDb, tagDto);
@@ -88,7 +94,7 @@ namespace CMCore.Controllers
         [HttpPost]
         public async Task<IActionResult> New([FromBody] TagDto tagDto)
         {
-            var errorMsg = _tagService.Validate(tagDto, null);
+            var errorMsg = _tagService.Validate(tagDto);
             if (errorMsg != null)
             {
                 return BadRequest(errorMsg);

@@ -10,7 +10,8 @@ namespace CMCore.Interfaces
         List<TagDto> FindAll(string name);
         Tag Exist(int id);
         TagDto Edit(Tag tagInDb, TagDto tagDto);
-        string Validate(TagDto tagDto, Tag tagInDb);
+        string Validate(TagDto tagDto);
+        string Compare(Tag tagInDb, TagDto tagDto);
         bool Erase(Tag tagInDb);
         Task<TagDto> SaveNew(TagDto tagDto);
     }
