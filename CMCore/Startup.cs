@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using CMCore.Data;
 using CMCore.Helpers;
+using CMCore.Interfaces;
 using CMCore.Models;
+using CMCore.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
@@ -41,6 +43,7 @@ namespace CMCore
                 });
             });
             services.AddAutoMapper();
+            services.AddTransient<ITagService, TagService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
