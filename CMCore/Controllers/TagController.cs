@@ -1,9 +1,10 @@
 ﻿using System.Threading.Tasks;
+using AutoMapper;
 using CMCore.DTO;
 using CMCore.Interfaces;
+using CMCore.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 
 namespace CMCore.Controllers
 {
@@ -41,7 +42,7 @@ namespace CMCore.Controllers
                 return BadRequest("Tag dosen't exist!");
             }
 
-            return Ok(tagInDb);
+            return Ok(Mapper.Map<Tag, TagDto>(tagInDb));
         }
 
         // PATCH tag/id

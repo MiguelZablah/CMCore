@@ -44,6 +44,7 @@ namespace CMCore
             });
             services.AddAutoMapper();
             services.AddTransient<ITagService, TagService>();
+            services.AddTransient<ICompanieService, CompanieService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

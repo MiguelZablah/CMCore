@@ -56,7 +56,7 @@ namespace CMCore.Services
         {
             if (!string.IsNullOrEmpty(tagDto.Name))
             {
-                if (tagInDb != null && tagInDb.Name.ToLower() == tagDto.Name.ToLower())
+                if (tagInDb.Name.ToLower() == tagDto.Name.ToLower())
                     return "Same name, not changes made";
 
             }
