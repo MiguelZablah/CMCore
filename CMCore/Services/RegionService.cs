@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMCore.Services
 {
@@ -39,21 +39,39 @@ namespace CMCore.Services
 
         public Region Exist(int id)
         {
-            var regionInDb = _context.Regions.SingleOrDefault(c => c.Id == id);
-
-            return regionInDb;
+            try
+            {
+                var regionInDb = _context.Regions.Include("Countries").SingleOrDefault(c => c.Id == id);
+                return regionInDb;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public string Validate(RegionDto regionDto)
         {
 
+            var checkName = CheckSameName(regionDto);
+            if (checkName != null)
+            {
+                return checkName;
+            }
+
+            return string.IsNullOrEmpty(regionDto.Name) ? "You send a null or empty string!" : null;
+        }
+
+        public string CheckSameName(RegionDto regionDto)
+        {
             if (!string.IsNullOrEmpty(regionDto.Name))
             {
                 if (_context.Regions.Any(t => t.Name.ToLower() == regionDto.Name.ToLower()))
                     return "A Region with that name already exist!";
             }
 
-            return string.IsNullOrEmpty(regionDto.Name) ? "You send a null or empty string!" : null;
+            return null;
         }
 
         public string Compare(Region regionInDb, RegionDto regionDto)
@@ -70,14 +88,15 @@ namespace CMCore.Services
 
         public RegionDto Edit(Region regionInDb, RegionDto regionDto)
         {
+            if (Compare(regionInDb, regionDto) != null)
+                return Mapper.Map<Region, RegionDto>(regionInDb);
+
+            if(string.IsNullOrEmpty(regionDto.Name))
+                return Mapper.Map<Region, RegionDto>(regionInDb);
 
             regionInDb.Name = regionDto.Name;
-
-            _context.SaveChanges();
-
-            var region = _context.Regions.ProjectTo<RegionDto>().SingleOrDefault(f => f.Id == regionInDb.Id);
-
-            return region;
+            
+            return Mapper.Map<Region, RegionDto>(regionInDb);
         }
 
         public Region CreateNew(RegionDto regionDto)
@@ -90,29 +109,30 @@ namespace CMCore.Services
             return newRegion;
         }
 
-        public async Task<RegionDto> SaveNew(RegionDto regionDto)
+        public string RegionCountrieRelation(Region regionInDb, RegionDto regionDto)
         {
-            var newRegion = new Region
+            foreach (var country in regionDto.Countries)
             {
-                Name = regionDto.Name
-            };
-            _context.Regions.Add(newRegion);
-            await _context.SaveChangesAsync();
-            return Mapper.Map<Region, RegionDto>(newRegion);
+                var countryErMsg = _countryService.EditSaveRegionR(country, regionInDb);
+                if (countryErMsg != null)
+                    return countryErMsg;
+            }
+
+            return null;
         }
 
         public bool Erase(Region regionInDb)
         {
-            _context.Regions.Remove(regionInDb);
-            _context.SaveChanges();
-
-            return true;
-        }
-
-        public async Task<RegionDto> Save(Region regionInDb)
-        {
-            await _context.SaveChangesAsync();
-            return Mapper.Map<Region, RegionDto>(regionInDb);
+            try
+            {
+                _context.Regions.Remove(regionInDb);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
     }
 }

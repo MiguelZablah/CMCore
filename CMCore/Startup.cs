@@ -43,6 +43,7 @@ namespace CMCore
                 });
             });
             services.AddAutoMapper();
+            services.AddTransient<IEfService, EfService>();
             services.AddTransient<ITagService, TagService>();
             services.AddTransient<ICompanieService, CompanieService>();
             services.AddTransient<ICountryService, CountryService>();
