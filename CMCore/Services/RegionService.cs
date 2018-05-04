@@ -51,6 +51,20 @@ namespace CMCore.Services
             }
         }
 
+        public Region ExistName(string name)
+        {
+            try
+            {
+                var regionInDb = _context.Regions.Include("Countries").SingleOrDefault(c => c.Name.ToLower() == name.ToLower());
+                return regionInDb;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+
         public string Validate(RegionDto regionDto)
         {
 
@@ -111,11 +125,15 @@ namespace CMCore.Services
 
         public string RegionCountrieRelation(Region regionInDb, RegionDto regionDto)
         {
-            foreach (var country in regionDto.Countries)
+            if (regionDto.Countries != null)
             {
-                var countryErMsg = _countryService.EditSaveRegionR(country, regionInDb);
-                if (countryErMsg != null)
-                    return countryErMsg;
+                foreach (var country in regionDto.Countries)
+                {
+                    var countryErMsg = _countryService.EditSaveRegionR(country, regionInDb);
+                    if (countryErMsg != null)
+                        return countryErMsg;
+                }
+                return null;
             }
 
             return null;

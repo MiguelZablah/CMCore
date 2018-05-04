@@ -61,12 +61,9 @@ namespace CMCore.Controllers
                 return BadRequest(errorMsg);
 
             // Countrie check
-            if (regionDto.Countries != null)
-            {
-                var countryValMsg = _regionService.RegionCountrieRelation(regionInDb, regionDto);
-                if (countryValMsg != null)
-                    return BadRequest(countryValMsg);
-            }
+            var countryValMsg = _regionService.RegionCountrieRelation(regionInDb, regionDto);
+            if (countryValMsg != null)
+                return BadRequest(countryValMsg);
 
             var newRegion = _regionService.Edit(regionInDb, regionDto);
 
@@ -107,12 +104,9 @@ namespace CMCore.Controllers
             var newRegion = _regionService.CreateNew(regionDto);
 
             // Countrie check
-            if (regionDto.Countries != null)
-            {
-                var countryValMsg = _regionService.RegionCountrieRelation(newRegion, regionDto);
-                if (countryValMsg != null)
-                    return BadRequest(countryValMsg);
-            }
+            var countryValMsg = _regionService.RegionCountrieRelation(newRegion, regionDto);
+            if (countryValMsg != null)
+                return BadRequest(countryValMsg);
 
             var saved = await _efService.SaveEf();
             if (!saved)

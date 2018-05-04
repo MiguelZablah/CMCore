@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using CMCore.Data;
@@ -36,28 +36,53 @@ namespace CMCore.Services
 
         public Countrie Exist(int id)
         {
-            var countrieInDb = _context.Countries.SingleOrDefault(c => c.Id == id);
-
-            return countrieInDb;
+            try
+            {
+                var countrieInDb = _context.Countries.SingleOrDefault(c => c.Id == id);
+                return countrieInDb;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public Countrie ExistName(string name)
         {
-            var countrieInDb = _context.Countries.SingleOrDefault(c => c.Name.ToLower() == name.ToLower());
-
-            return countrieInDb;
+            try
+            {
+                var countrieInDb = _context.Countries.SingleOrDefault(c => c.Name.ToLower() == name.ToLower());
+                return countrieInDb;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
-        public string Validate(CountrieDto countrieDto)
+        public string Validate(CountrieDto countriDto)
         {
 
-            if (!string.IsNullOrEmpty(countrieDto.Name))
+            var checkName = CheckSameName(countriDto);
+            if (checkName != null)
             {
-                if (_context.Countries.Any(t => t.Name.ToLower() == countrieDto.Name.ToLower()))
-                    return "A Country with that name already exist!";
+                return checkName;
             }
 
-            return string.IsNullOrEmpty(countrieDto.Name) ? "You send a null or empty string!" : null;
+            return string.IsNullOrEmpty(countriDto.Name) ? "You send a null or empty string!" : null;
+        }
+
+        public string CheckSameName(CountrieDto countriDto)
+        {
+            if (!string.IsNullOrEmpty(countriDto.Name))
+            {
+                if (_context.Countries.Any(t => t.Name.ToLower() == countriDto.Name.ToLower()))
+                    return "A Countrie with that name already exist!";
+            }
+
+            return null;
         }
 
         public string Compare(Countrie countrieInDb, CountrieDto countrieDto)
@@ -75,13 +100,15 @@ namespace CMCore.Services
         public CountrieDto Edit(Countrie countrieInDb, CountrieDto countrieDto)
         {
 
-            Mapper.Map(countrieDto, countrieInDb);
+            if (Compare(countrieInDb, countrieDto) != null)
+                return Mapper.Map<Countrie, CountrieDto>(countrieInDb);
 
-            _context.SaveChanges();
+            if (string.IsNullOrEmpty(countrieDto.Name))
+                return Mapper.Map<Countrie, CountrieDto>(countrieInDb);
 
-            var countrie = _context.Countries.ProjectTo<CountrieDto>().SingleOrDefault(f => f.Id == countrieInDb.Id);
+            countrieInDb.Name = countrieDto.Name;
 
-            return countrie;
+            return Mapper.Map<Countrie, CountrieDto>(countrieInDb);
         }
 
         public string EditSaveRegionR(CountrieDto countrieDto, Region regionInDb)
@@ -121,23 +148,18 @@ namespace CMCore.Services
             return newCountrie;
         }
 
-        public async Task<CountrieDto> SaveNew(CountrieDto countrieDto)
-        {
-            var newCountrie = new Countrie
-            {
-                Name = countrieDto.Name
-            };
-            _context.Countries.Add(newCountrie);
-            await _context.SaveChangesAsync();
-            return Mapper.Map<Countrie, CountrieDto>(newCountrie);
-        }
-
         public bool Erase(Countrie countrieInDb)
         {
-            _context.Countries.Remove(countrieInDb);
-            _context.SaveChanges();
-
-            return true;
+            try
+            {
+                _context.Countries.Remove(countrieInDb);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
     }
 }

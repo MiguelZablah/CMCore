@@ -12,8 +12,8 @@ namespace CMCore.Interfaces
         string Validate(RegionDto regionDto);
         string CheckSameName(RegionDto regionDto);
         string Compare(Region regionInDb, RegionDto regionDto);
-        bool Erase(Region regionInDb);
         string RegionCountrieRelation(Region regionInDb, RegionDto regionDto);
         Region CreateNew(RegionDto regionDto);
+        bool Erase(Region regionInDb);
     }
 }
