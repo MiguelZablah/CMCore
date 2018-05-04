@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using CMCore.Data;
 using CMCore.DTO;
+using CMCore.Interfaces;
+using CMCore.Services;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Type = CMCore.Models.Type;
 
@@ -18,25 +14,21 @@ namespace CMCore.Controllers
     [EnableCors("AllowSpecificOrigin")]
     public class TypeController : Controller
     {
-        private readonly ContentManagerDbContext _context;
+        private readonly ITypeService _typeService;
+        private readonly IEfService _efService;
 
-        public TypeController(ContentManagerDbContext context)
+        public TypeController(ITypeService typeService, IEfService efService)
         {
-            _context = context;
+            _typeService = typeService;
+            _efService = efService;
         }
 
         // GET type/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
-            var typesQuery = _context.Types.ProjectTo<TypeDto>();
-
-            if (!String.IsNullOrWhiteSpace(name))
-                typesQuery = typesQuery.Where(f => f.Name.ToLower().Contains(name));
-
-            var types = typesQuery.ToList();
-
-            if (types.Count <= 0)
+            var types = _typeService.FindAll(name);
+            if (types == null)
                 return BadRequest("No Types");
 
             return Ok(types);
@@ -46,80 +38,70 @@ namespace CMCore.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var type = _context.Types.ProjectTo<TypeDto>().SingleOrDefault(t => t.Id == id);
+            var typeInDb = _typeService.Exist(id);
+            if (typeInDb == null)
+                return BadRequest("Type dosen't exist!");
 
-            if (type == null)
-                return BadRequest("Type not found");
-
-            return Ok(type);
+            return Ok(Mapper.Map<Type, TypeDto>(typeInDb));
         }
 
         // PATCH /type/id
         [HttpPatch("{id}")]
-        public IActionResult Edit(int id, [FromBody] TypeDto typeDto)
+        public async Task<IActionResult> Edit(int id, [FromBody] TypeDto typeDto)
         {
-            var typeInDb = _context.Types.SingleOrDefault(t => t.Id == id);
+            if (typeDto == null)
+                return BadRequest("You send a empty countrie");
 
+            var typeInDb = _typeService.Exist(id);
             if (typeInDb == null)
-                return NotFound();
+                return BadRequest("Type dosen't exist!");
 
-            if (!String.IsNullOrEmpty(typeDto.Name))
-            {
-                if (typeInDb.Name.ToLower() == typeDto.Name.ToLower())
-                    return BadRequest("Same name, not changes made");
+            var errorMsg = _typeService.CheckSameName(typeDto);
+            if (errorMsg != null)
+                return BadRequest(errorMsg);
 
-                if (_context.Types.Any(t => t.Name.ToLower() == typeDto.Name.ToLower()))
-                    return BadRequest("A type with that name already exist!");
-            }
+            var newType = _typeService.Edit(typeInDb, typeDto);
 
-            // Keep name if not send
-            if (String.IsNullOrEmpty(typeDto.Name))
-                typeDto.Name = typeInDb.Name;
+            var saved = await _efService.SaveEf();
+            if (!saved)
+                return BadRequest();
 
-            Mapper.Map(typeDto, typeInDb);
-
-            _context.SaveChanges();
-
-            // Return new file
-            var type = _context.Types.ProjectTo<TypeDto>().SingleOrDefault(t => t.Id == typeInDb.Id);
-
-            return Ok(type);
+            return Ok(Mapper.Map<Type, TypeDto>(_typeService.Exist(newType.Id)));
         }
 
         // DELETE type/delete/id
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var typeInDb = _context.Types.SingleOrDefault(c => c.Id == id);
-
+            var typeInDb = _typeService.Exist(id);
             if (typeInDb == null)
-                return NotFound();
+                return BadRequest("Type dosen't exist!");
 
-            _context.Types.Remove(typeInDb);
-            _context.SaveChanges();
+            var delete = _typeService.Erase(typeInDb);
+            if (!delete)
+                return BadRequest("Type not deleted!");
 
-            return Ok("Type Deleted: " + id);
+            var saved = await _efService.SaveEf();
+            if (!saved)
+                return BadRequest();
+
+            return Ok("Type Deleted: " + typeInDb.Name);
         }
 
         // POST type/new
         [HttpPost]
         public async Task<IActionResult> New([FromBody] TypeDto typeDto)
         {
-            if (typeDto == null)
-                return BadRequest("Did you send one type or somthing else?!");
+            var errorMsg = _typeService.Validate(typeDto);
+            if (errorMsg != null)
+                return BadRequest(errorMsg);
 
-            if (String.IsNullOrEmpty(typeDto.Name))
-                return BadRequest("Not type name send!");
+            var newType = _typeService.CreateNew(typeDto);
 
-            if (_context.Types.Any(t => t.Name.ToLower() == typeDto.Name.ToLower()))
-                return BadRequest("Type name already exist! No duplicates plz!");
+            var saved = await _efService.SaveEf();
+            if (!saved)
+                return BadRequest();
 
-            var newType = new Type
-            {
-                Name = typeDto.Name
-            };
-            _context.Types.Add(newType);
-            await _context.SaveChangesAsync();
             return Ok(Mapper.Map<Type, TypeDto>(newType));
         }
     }

@@ -43,11 +43,13 @@ namespace CMCore
                 });
             });
             services.AddAutoMapper();
+            // Services for api
             services.AddTransient<IEfService, EfService>();
             services.AddTransient<ITagService, TagService>();
             services.AddTransient<ICompanieService, CompanieService>();
             services.AddTransient<ICountryService, CountryService>();
             services.AddTransient<IRegionService, RegionService>();
+            services.AddTransient<ITypeService, TypeService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
