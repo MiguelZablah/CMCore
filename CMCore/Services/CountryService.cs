@@ -67,9 +67,7 @@ namespace CMCore.Services
 
             var checkName = CheckSameName(countriDto);
             if (checkName != null)
-            {
                 return checkName;
-            }
 
             return string.IsNullOrEmpty(countriDto.Name) ? "You send a null or empty string!" : null;
         }

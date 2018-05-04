@@ -34,7 +34,7 @@ namespace CMCore.Controllers
             return Ok(countries);
         }
 
-        // GET country/
+        // GET country/id
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {

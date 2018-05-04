@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using CMCore.Data;
@@ -36,20 +36,50 @@ namespace CMCore.Services
 
         public Tag Exist(int id)
         {
-            var tagInDb = _context.Tags.SingleOrDefault(c => c.Id == id);
+            try
+            {
+                var tagInDb = _context.Tags.SingleOrDefault(c => c.Id == id);
+                return tagInDb;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
 
-            return tagInDb;
+        public Tag ExistName(string name)
+        {
+            try
+            {
+                var tagInDb = _context.Tags.SingleOrDefault(t => t.Name.ToLower() == name.ToLower());
+                return tagInDb;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public string Validate(TagDto tagDto) {
 
+            var checkName = CheckSameName(tagDto);
+            if (checkName != null)
+                return checkName;
+
+            return string.IsNullOrEmpty(tagDto.Name) ? "You send a null or empty string!" : null;
+        }
+
+        public string CheckSameName(TagDto tagDto)
+        {
             if (!string.IsNullOrEmpty(tagDto.Name))
             {
                 if (_context.Tags.Any(t => t.Name.ToLower() == tagDto.Name.ToLower()))
                     return "A Tag with that name already exist!";
             }
 
-            return string.IsNullOrEmpty(tagDto.Name) ? "You send a null or empty string!" : null;
+            return null;
         }
 
         public string Compare(Tag tagInDb, TagDto tagDto)
@@ -67,32 +97,39 @@ namespace CMCore.Services
         public TagDto Edit(Tag tagInDb, TagDto tagDto)
         {
 
-            Mapper.Map(tagDto, tagInDb);
+            if (Compare(tagInDb, tagDto) != null)
+                return Mapper.Map<Tag, TagDto>(tagInDb);
 
-            _context.SaveChanges();
+            if (string.IsNullOrEmpty(tagDto.Name))
+                return Mapper.Map<Tag, TagDto>(tagInDb);
 
-            var tag = _context.Tags.ProjectTo<TagDto>().SingleOrDefault(f => f.Id == tagInDb.Id);
+            tagInDb.Name = tagDto.Name;
 
-            return tag;
+            return Mapper.Map<Tag, TagDto>(tagInDb);
         }
 
-        public async Task<TagDto> SaveNew(TagDto tagDto)
+        public Tag CreateNew(TagDto tagDto)
         {
             var newTag = new Tag
             {
                 Name = tagDto.Name
             };
             _context.Tags.Add(newTag);
-            await _context.SaveChangesAsync();
-            return Mapper.Map<Tag, TagDto>(newTag);
+            return newTag;
         }
 
         public bool Erase(Tag tagInDb)
         {
-            _context.Tags.Remove(tagInDb);
-            _context.SaveChanges();
-
-            return true;
+            try
+            {
+                _context.Tags.Remove(tagInDb);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
     }
