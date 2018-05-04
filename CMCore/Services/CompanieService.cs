@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using CMCore.Data;
@@ -36,21 +36,52 @@ namespace CMCore.Services
 
         public Companie Exist(int id)
         {
-            var companieInDb = _context.Companies.SingleOrDefault(c => c.Id == id);
+            try
+            {
+                var companieInDb = _context.Companies.SingleOrDefault(c => c.Id == id);
+                return companieInDb;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
 
-            return companieInDb;
+        }
+
+        public Companie ExistName(string name)
+        {
+            try
+            {
+                var companieInDb = _context.Companies.SingleOrDefault(t => t.Name.ToLower() == name.ToLower());
+                return companieInDb;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
         }
 
         public string Validate(CompanieDto companieDto)
         {
 
+            var checkName = CheckSameName(companieDto);
+            if (checkName != null)
+                return checkName;
+
+            return string.IsNullOrEmpty(companieDto.Name) ? "You send a null or empty string!" : null;
+        }
+
+        public string CheckSameName(CompanieDto companieDto)
+        {
             if (!string.IsNullOrEmpty(companieDto.Name))
             {
                 if (_context.Companies.Any(t => t.Name.ToLower() == companieDto.Name.ToLower()))
                     return "A Companie with that name already exist!";
             }
 
-            return string.IsNullOrEmpty(companieDto.Name) ? "You send a null or empty string!" : null;
+            return null;
         }
 
         public string Compare(Companie companieInDb, CompanieDto companieDto)
@@ -68,32 +99,39 @@ namespace CMCore.Services
         public CompanieDto Edit(Companie companieInDb, CompanieDto companieDto)
         {
 
-            Mapper.Map(companieDto, companieInDb);
+            if (Compare(companieInDb, companieDto) != null)
+                return Mapper.Map<Companie, CompanieDto>(companieInDb);
 
-            _context.SaveChanges();
+            if (string.IsNullOrEmpty(companieDto.Name))
+                return Mapper.Map<Companie, CompanieDto>(companieInDb);
 
-            var companie = _context.Companies.ProjectTo<CompanieDto>().SingleOrDefault(f => f.Id == companieInDb.Id);
+            companieInDb.Name = companieDto.Name;
 
-            return companie;
+            return Mapper.Map<Companie, CompanieDto>(companieInDb);
         }
 
-        public async Task<CompanieDto> SaveNew(CompanieDto companieDto)
+        public Companie CreateNew(CompanieDto companieDto)
         {
             var newCompanie = new Companie
             {
                 Name = companieDto.Name
             };
             _context.Companies.Add(newCompanie);
-            await _context.SaveChangesAsync();
-            return Mapper.Map<Companie, CompanieDto>(newCompanie);
+            return newCompanie;
         }
 
         public bool Erase(Companie companieInDb)
         {
-            _context.Companies.Remove(companieInDb);
-            _context.SaveChanges();
-
-            return true;
+            try
+            {
+                _context.Companies.Remove(companieInDb);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
     }

@@ -3,6 +3,7 @@ using AutoMapper;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
+using CMCore.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,12 @@ namespace CMCore.Controllers
     public class CompanieController : Controller
     {
         private readonly ICompanieService _companieService;
+        private readonly IEfService _efService;
 
-        public CompanieController(ICompanieService companieService)
+        public CompanieController(ICompanieService companieService, IEfService efService)
         {
             _companieService = companieService;
+            _efService = efService;
         }
 
         // GET companie/
@@ -45,28 +48,31 @@ namespace CMCore.Controllers
 
         // PATCH companie/id
         [HttpPatch("{id}")]
-        public IActionResult Edit(int id, [FromBody] CompanieDto companieDto)
+        public async Task<IActionResult> Edit(int id, [FromBody] CompanieDto companieDto)
         {
+            if (companieDto == null)
+                return BadRequest("You send a empty countrie");
+
             var companieInDb = _companieService.Exist(id);
             if (companieInDb == null)
                 return BadRequest("Companie dosen't exist!");
 
-            var errorMsg = _companieService.Validate(companieDto);
+            var errorMsg = _companieService.CheckSameName(companieDto);
             if (errorMsg != null)
                 return BadRequest(errorMsg);
 
-            var errMsg = _companieService.Compare(companieInDb, companieDto);
-            if (errMsg != null)
-                return BadRequest(errMsg);
+            var newCompanie = _companieService.Edit(companieInDb, companieDto);
 
-            var companieSave = _companieService.Edit(companieInDb, companieDto);
+            var saved = await _efService.SaveEf();
+            if (!saved)
+                return BadRequest();
 
-            return Ok(companieSave);
+            return Ok(Mapper.Map<Companie, CompanieDto>(_companieService.Exist(newCompanie.Id)));
         }
 
         // DELETE companie/id
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var companieInDb = _companieService.Exist(id);
             if (companieInDb == null)
@@ -75,6 +81,10 @@ namespace CMCore.Controllers
             var delete = _companieService.Erase(companieInDb);
             if (!delete)
                 return BadRequest("Companie not deleted!");
+
+            var saved = await _efService.SaveEf();
+            if (!saved)
+                return BadRequest();
 
             return Ok("Companie Deleted: " + companieInDb.Name);
         }
@@ -87,8 +97,13 @@ namespace CMCore.Controllers
             if (errorMsg != null)
                 return BadRequest(errorMsg);
 
-            var newCompanie = await _companieService.SaveNew(companieDto);
-            return Ok(newCompanie);
+            var newCompanie = _companieService.CreateNew(companieDto);
+
+            var saved = await _efService.SaveEf();
+            if (!saved)
+                return BadRequest();
+
+            return Ok(Mapper.Map<Companie, CompanieDto>(newCompanie));
         }
     }
 }
