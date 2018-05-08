@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
@@ -27,8 +29,8 @@ namespace CMCore.Controllers
         [HttpGet]
         public IActionResult Get(string name = null)
         {
-            var tags = _tagService.FindAll(name);
-            if (tags == null)
+            var tags = _tagService.FindAll(name).ProjectTo<TagDto>().ToList();
+            if (!tags.Any())
                 return BadRequest("No Tags");
 
             return Ok(tags);
@@ -39,7 +41,7 @@ namespace CMCore.Controllers
         public IActionResult Get(int id)
         {
             var tagInDb = _tagService.Exist(id);
-            if (tagInDb == null)
+            if (ReferenceEquals(tagInDb, default(Tag)))
                 return BadRequest("Tag dosen't exist!");
 
             return Ok(Mapper.Map<Tag, TagDto>(tagInDb));
@@ -49,15 +51,15 @@ namespace CMCore.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> Edit(int id, [FromBody] TagDto tagDto)
         {
-            if (tagDto == null)
+            if (ReferenceEquals(tagDto, default(TagDto)))
                 return BadRequest("You send a empty countrie");
 
             var tagInDb = _tagService.Exist(id);
-            if (tagInDb == null)
+            if (ReferenceEquals(tagInDb, default(Tag)))
                 return BadRequest("Tag dosen't exist!");
 
             var errorMsg = _tagService.CheckSameName(tagDto);
-            if (errorMsg != null)
+            if (!string.IsNullOrWhiteSpace(errorMsg))
                 return BadRequest(errorMsg);
 
             var newTag = _tagService.Edit(tagInDb, tagDto);

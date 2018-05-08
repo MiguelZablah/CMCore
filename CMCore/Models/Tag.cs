@@ -1,9 +1,10 @@
 ﻿using CMCore.Models.RelacionClass;
 using System.Collections.Generic;
+using CMCore.Interfaces;
 
 namespace CMCore.Models
 {
-    public class Tag
+    public class Tag : IEntity
     {
         public Tag()
         {

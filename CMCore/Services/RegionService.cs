@@ -55,7 +55,7 @@ namespace CMCore.Services
         {
             try
             {
-                var regionInDb = _context.Regions.Include("Countries").SingleOrDefault(c => c.Name.ToLower() == name.ToLower());
+                var regionInDb = _context.Regions.Include(r => r.Countries).SingleOrDefault(c => c.Name.ToLower() == name.ToLower());
                 return regionInDb;
             }
             catch (Exception e)

@@ -1,6 +1,8 @@
-﻿namespace CMCore.DTO
+﻿using CMCore.Interfaces;
+
+namespace CMCore.DTO
 {
-    public class TagDto
+    public class TagDto : IEntity
     {
         public int Id { get; set; }
 

@@ -2,7 +2,6 @@
 using CMCore.Data;
 using CMCore.Helpers;
 using CMCore.Interfaces;
-using CMCore.Models;
 using CMCore.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -50,6 +49,8 @@ namespace CMCore
             services.AddTransient<ICountryService, CountryService>();
             services.AddTransient<IRegionService, RegionService>();
             services.AddTransient<ITypeService, TypeService>();
+            services.AddTransient<IClubService, ClubService>();
+            services.AddTransient(typeof(GenericService<>));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

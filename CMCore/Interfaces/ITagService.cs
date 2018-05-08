@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using CMCore.DTO;
 using CMCore.Models;
 
@@ -7,7 +6,7 @@ namespace CMCore.Interfaces
 {
     public interface ITagService
     {
-        List<TagDto> FindAll(string name);
+        IQueryable<Tag> FindAll(string name);
         Tag Exist(int id);
         TagDto Edit(Tag tagInDb, TagDto tagDto);
         string Validate(TagDto tagDto);
