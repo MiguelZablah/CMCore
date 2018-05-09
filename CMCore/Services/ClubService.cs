@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using AutoMapper;
 using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
@@ -8,58 +9,83 @@ namespace CMCore.Services
 {
     public class ClubService : GenericService<Club, ClubDto>, IClubService
     {
-        public ClubService(ContentManagerDbContext context) : base(context)
+        private readonly IRegionService _regionService;
+        private readonly ITypeService _typeService;
+
+        public ClubService(ContentManagerDbContext context, IRegionService regionService, ITypeService typeService) : base(context)
         {
+            _regionService = regionService;
+            _typeService = typeService;
         }
 
-        //public Club Exist(int id)
-        //{
-        //    try
-        //    {
-        //        var clubInDb = _context.Clubs
-        //            .Include(c => c.ClubTypes)
-        //                .ThenInclude(ct => ct.Type)
-        //            .Include(c => c.ClubRegions)
-        //                .ThenInclude(cr => cr.Region)
-        //                    .ThenInclude(r => r.Countries)
-        //            .SingleOrDefault(c => c.Id == id);
-        //        return clubInDb;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e);
-        //        return null;
-        //    }
-        //}
-
-        //public Club ExistName(string name)
-        //{
-        //    try
-        //    {
-        //        var clubInDb = _context.Clubs
-        //            .Include(c => c.ClubTypes)
-        //            .ThenInclude(ct => ct.Type)
-        //            .Include(c => c.ClubRegions)
-        //            .ThenInclude(cr => cr.Region)
-        //            .ThenInclude(r => r.Countries)
-        //            .SingleOrDefault(c => c.Name.ToLower() == name.ToLower());
-        //        return clubInDb;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e);
-        //        return null;
-        //    }
-        //}
-
-        public ClubDto Edit(Club clubInDb, ClubDto clubDto)
+        public override ClubDto Edit(Club clubInDb, ClubDto clubDto)
         {
-            throw new NotImplementedException();
+            if (CompareString(clubInDb.Name, clubDto.Name))
+                clubInDb.Name = clubDto.Name;
+
+            if (CompareString(clubInDb.Url, clubDto.Url))
+                clubInDb.Url = clubDto.Url;
+
+            return Mapper.Map<Club, ClubDto>(clubInDb);
+        }
+
+        public override string Validate(ClubDto clubDto)
+        {
+            var checkName = CheckSameName(clubDto);
+            if (!string.IsNullOrWhiteSpace(checkName))
+                return checkName;
+
+            if (string.IsNullOrWhiteSpace(clubDto.Name))
+                return "You send am invalid name!";
+
+            if (Context.Clubs.Any(c => c.Url.Equals(clubDto.Url)))
+                return "A club with that url already exist!";
+
+            return null;
         }
 
         public Club CreateNew(ClubDto clubDto)
         {
-            throw new NotImplementedException();
+            var newClub = new Club
+            {
+                Name = clubDto.Name,
+                Url = clubDto.Url
+            };
+
+            return AddEf(newClub) ? newClub : default(Club);
         }
+
+        public string AddRegionCountriR(Club clubInDb, ClubDto clubDto)
+        {
+            if (clubDto.Regions != null)
+            {
+                foreach (var region in clubDto.Regions)
+                {
+                    var countrieErMsg = _regionService.AddClubCountrieR(region, clubInDb);
+                    if (countrieErMsg != null)
+                        return countrieErMsg;
+                }
+                return null;
+            }
+
+            return null;
+        }
+
+        public string AddTypeR(Club clubInDb, ClubDto clubDto)
+        {
+            if (clubDto.Types != null)
+            {
+                foreach (var type in clubDto.Types)
+                {
+                    var countrieErMsg = _typeService.AddClubR(type, clubInDb);
+                    if (countrieErMsg != null)
+                        return countrieErMsg;
+                }
+                return null;
+            }
+
+            return null;
+        }
+
     }
 }

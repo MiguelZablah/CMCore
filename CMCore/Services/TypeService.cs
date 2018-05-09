@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
+﻿using System.Linq;
 using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
+using CMCore.Models;
+using CMCore.Models.RelacionClass;
 using Type = CMCore.Models.Type;
 
 namespace CMCore.Services
@@ -16,20 +14,6 @@ namespace CMCore.Services
         {
         }
 
-        public TypeDto Edit(Type typeInDb, TypeDto typeDto)
-        {
-
-            if (Compare(typeInDb, typeDto) != null)
-                return Mapper.Map<Type, TypeDto>(typeInDb);
-
-            if (string.IsNullOrEmpty(typeDto.Name))
-                return Mapper.Map<Type, TypeDto>(typeInDb);
-
-            typeInDb.Name = typeDto.Name;
-
-            return Mapper.Map<Type, TypeDto>(typeInDb);
-        }
-
         public Type CreateNew(TypeDto typeDto)
         {
             var newType = new Type
@@ -38,6 +22,45 @@ namespace CMCore.Services
             };
 
             return AddEf(newType) ? newType : default(Type);
+        }
+
+        public string AddClubR(TypeDto typeDto, Club clubInDb)
+        {
+            var typenInDb = ExistName(typeDto.Name).FirstOrDefault();
+            if (typenInDb == null)
+            {
+                var createdType = new Type
+                {
+                    Name = typeDto.Name
+                };
+                AddEf(createdType);
+
+                var newType = createdType;
+                var newClubType = new ClubType
+                {
+                    ClubId = clubInDb.Id,
+                    TypeId = newType.Id
+                };
+                Context.ClubTypes.Add(newClubType);
+
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(typeDto.Name))
+                return "You send a null or empty Type!";
+
+            var typeHasClub = clubInDb.ClubTypes.Any(cr => cr.TypeId == typenInDb.Id);
+            if (!typeHasClub)
+            {
+                var newClubType = new ClubType
+                {
+                    ClubId = clubInDb.Id,
+                    TypeId = typenInDb.Id
+                };
+                Context.ClubTypes.Add(newClubType);
+            }
+
+            return null;
         }
 
     }

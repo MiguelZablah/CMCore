@@ -12,20 +12,6 @@ namespace CMCore.Services
         {
         }
 
-        public CompanieDto Edit(Companie companieInDb, CompanieDto companieDto)
-        {
-
-            if (Compare(companieInDb, companieDto) != null)
-                return Mapper.Map<Companie, CompanieDto>(companieInDb);
-
-            if (string.IsNullOrEmpty(companieDto.Name))
-                return Mapper.Map<Companie, CompanieDto>(companieInDb);
-
-            companieInDb.Name = companieDto.Name;
-
-            return Mapper.Map<Companie, CompanieDto>(companieInDb);
-        }
-
         public Companie CreateNew(CompanieDto companieDto)
         {
             var newCompanie = new Companie

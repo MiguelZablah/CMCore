@@ -12,10 +12,11 @@ namespace CMCore.Interfaces
         IQueryable<Club> ExistName(string name);
         string Validate(ClubDto clubDto);
         string CheckSameName(ClubDto clubDto);
-        string Compare(Club clubInDb, ClubDto clubDto);
         bool Erase(Club clubInDb);
         Task<bool> SaveEf();
         ClubDto Edit(Club clubInDb, ClubDto clubDto);
         Club CreateNew(ClubDto clubDto);
+        string AddRegionCountriR(Club clubInDb, ClubDto clubDto);
+        string AddTypeR(Club clubInDb, ClubDto clubDto);
     }
 }

@@ -9,13 +9,14 @@ namespace CMCore.Interfaces
     {
         IQueryable<Region> FindAll(string name);
         IQueryable<Region> Exist(int id);
+        IQueryable<Region> ExistName(string name);
         string Validate(RegionDto regionDto);
         string CheckSameName(RegionDto regionDto);
-        string Compare(Region regionInDb, RegionDto regionDto);
         bool Erase(Region regionInDb);
         Task<bool> SaveEf();
-        string AddCountrieR(Region regionInDb, RegionDto regionDto);
         RegionDto Edit(Region regionInDb, RegionDto regionDto);
         Region CreateNew(RegionDto regionDto);
+        string AddCountrieR(Region regionInDb, RegionDto regionDto);
+        string AddClubCountrieR(RegionDto regionDto, Club clubInDb);
     }
 }

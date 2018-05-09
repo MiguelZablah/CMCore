@@ -13,18 +13,14 @@ namespace CMCore.Services
         {
         }
 
-        public CountrieDto Edit(Countrie countrieInDb, CountrieDto countrieDto)
+        public Countrie CreateNew(CountrieDto countrieDto)
         {
+            var newCountrie = new Countrie
+            {
+                Name = countrieDto.Name
+            };
 
-            if (Compare(countrieInDb, countrieDto) != null)
-                return Mapper.Map<Countrie, CountrieDto>(countrieInDb);
-
-            if (string.IsNullOrEmpty(countrieDto.Name))
-                return Mapper.Map<Countrie, CountrieDto>(countrieInDb);
-
-            countrieInDb.Name = countrieDto.Name;
-
-            return Mapper.Map<Countrie, CountrieDto>(countrieInDb);
+            return AddEf(newCountrie) ? newCountrie : default(Countrie);
         }
 
         public string AddRegionR(CountrieDto countrieDto, Region regionInDb)
@@ -52,16 +48,6 @@ namespace CMCore.Services
 
             return null;
 
-        }
-
-        public Countrie CreateNew(CountrieDto countrieDto)
-        {
-            var newCountrie = new Countrie
-            {
-                Name = countrieDto.Name
-            };
-
-            return AddEf(newCountrie) ? newCountrie : default(Countrie);
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using CMCore.Data;
 using CMCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -9,13 +10,13 @@ namespace CMCore.Services
 {
     public class GenericService<T, TDto> where T : class, IEntity where TDto : class, IEntity
     {
-        private readonly ContentManagerDbContext _context;
+        protected readonly ContentManagerDbContext Context;
         private readonly DbSet<T> _dbSet;
 
         public GenericService(ContentManagerDbContext context)
         {
-            _context = context;
-            _dbSet = _context.Set<T>();
+            Context = context;
+            _dbSet = Context.Set<T>();
         }
 
         public IQueryable<T> FindAll(string name)
@@ -46,7 +47,7 @@ namespace CMCore.Services
         {
             try
             {
-                var resultInDb = _dbSet.Where(t => t.Name.ToLower() == name.ToLower()).AsQueryable();
+                var resultInDb = _dbSet.Where(t => t.Name.Equals(name.ToLower())).AsQueryable();
                 return resultInDb;
             }
             catch (Exception e)
@@ -56,7 +57,7 @@ namespace CMCore.Services
             }
         }
 
-        public string Validate(TDto tDto)
+        public virtual string Validate(TDto tDto)
         {
 
             var checkName = CheckSameName(tDto);
@@ -71,25 +72,18 @@ namespace CMCore.Services
             if (string.IsNullOrWhiteSpace(tDto.Name))
                 return null;
 
-            if (!string.IsNullOrWhiteSpace(tDto.Name))
-            {
-                if (_dbSet.Any(t => t.Name.ToLower() == tDto.Name.ToLower()))
-                    return "That name already exist!";
-            }
+            if (_dbSet.Any(t => t.Name.Equals(tDto.Name.ToLower())))
+                return "That name already exist!";
 
             return null;
         }
 
-        public string Compare(T tInDb, TDto tDto)
+        public bool CompareString(string a, string b)
         {
-            if (!string.IsNullOrWhiteSpace(tInDb.Name))
-            {
-                if (tDto.Name.ToLower() == tInDb.Name.ToLower())
-                    return "Same name, not changes made";
+            if (string.IsNullOrWhiteSpace(a) || string.IsNullOrWhiteSpace(b))
+                return false;
 
-            }
-
-            return null;
+            return !a.Equals(b);
         }
 
         public bool Erase(T tInDb)
@@ -124,7 +118,7 @@ namespace CMCore.Services
         {
             try
             {
-                await _context.SaveChangesAsync();
+                await Context.SaveChangesAsync();
                 return true;
             }
             catch (Exception e)
@@ -133,6 +127,15 @@ namespace CMCore.Services
                 return false;
             }
         }
+
+        public virtual TDto Edit(T tInDb, TDto tDto)
+        {
+            if (CompareString(tInDb.Name, tDto.Name))
+                tInDb.Name = tDto.Name;
+
+            return Mapper.Map<T, TDto>(tInDb);
+        }
+
     }
 
 }

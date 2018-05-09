@@ -12,20 +12,6 @@ namespace CMCore.Services
         {
         }
 
-        public TagDto Edit(Tag tagInDb, TagDto tagDto)
-        {
-
-            if (Compare(tagInDb, tagDto) != null)
-                return Mapper.Map<Tag, TagDto>(tagInDb);
-
-            if (string.IsNullOrEmpty(tagDto.Name))
-                return Mapper.Map<Tag, TagDto>(tagInDb);
-
-            tagInDb.Name = tagDto.Name;
-
-            return Mapper.Map<Tag, TagDto>(tagInDb);
-        }
-
         public Tag CreateNew(TagDto tagDto)
         {
             var newTag = new Tag
