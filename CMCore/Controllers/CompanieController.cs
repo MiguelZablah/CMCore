@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
-using CMCore.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,21 +16,19 @@ namespace CMCore.Controllers
     public class CompanieController : Controller
     {
         private readonly ICompanieService _companieService;
-        private readonly IEfService _efService;
 
-        public CompanieController(ICompanieService companieService, IEfService efService)
+        public CompanieController(ICompanieService companieService)
         {
             _companieService = companieService;
-            _efService = efService;
         }
 
         // GET companie/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
-            var companies = _companieService.FindAll(name);
+            var companies = _companieService.FindAll(name).ProjectTo<CompanieDto>().ToList();
 
-            if (companies == null)
+            if (!companies.Any())
                 return BadRequest("No Companies");
 
             return Ok(companies);
@@ -39,11 +38,11 @@ namespace CMCore.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var companieInDb = _companieService.Exist(id);
+            var companieInDb = _companieService.Exist(id).ProjectTo<CompanieDto>().FirstOrDefault();
             if (companieInDb == null)
                 return BadRequest("Companie dosen't exist!");
 
-            return Ok(Mapper.Map<Companie, CompanieDto>(companieInDb));
+            return Ok(companieInDb);
         }
 
         // PATCH companie/id
@@ -53,7 +52,7 @@ namespace CMCore.Controllers
             if (companieDto == null)
                 return BadRequest("You send a empty countrie");
 
-            var companieInDb = _companieService.Exist(id);
+            var companieInDb = _companieService.Exist(id).FirstOrDefault();
             if (companieInDb == null)
                 return BadRequest("Companie dosen't exist!");
 
@@ -63,18 +62,18 @@ namespace CMCore.Controllers
 
             var newCompanie = _companieService.Edit(companieInDb, companieDto);
 
-            var saved = await _efService.SaveEf();
+            var saved = await _companieService.SaveEf();
             if (!saved)
                 return BadRequest();
 
-            return Ok(Mapper.Map<Companie, CompanieDto>(_companieService.Exist(newCompanie.Id)));
+            return Ok(_companieService.Exist(newCompanie.Id).ProjectTo<CompanieDto>().FirstOrDefault());
         }
 
         // DELETE companie/id
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var companieInDb = _companieService.Exist(id);
+            var companieInDb = _companieService.Exist(id).FirstOrDefault();
             if (companieInDb == null)
                 return BadRequest("Companie dosen't exist!");
 
@@ -82,7 +81,7 @@ namespace CMCore.Controllers
             if (!delete)
                 return BadRequest("Companie not deleted!");
 
-            var saved = await _efService.SaveEf();
+            var saved = await _companieService.SaveEf();
             if (!saved)
                 return BadRequest();
 
@@ -99,7 +98,7 @@ namespace CMCore.Controllers
 
             var newCompanie = _companieService.CreateNew(companieDto);
 
-            var saved = await _efService.SaveEf();
+            var saved = await _companieService.SaveEf();
             if (!saved)
                 return BadRequest();
 

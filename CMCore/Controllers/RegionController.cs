@@ -1,11 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
-using CMCore.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMCore.Controllers
 {
@@ -15,20 +17,18 @@ namespace CMCore.Controllers
     public class RegionController : Controller
     {
         private readonly IRegionService _regionService;
-        private readonly IEfService _efService;
 
-        public RegionController(IRegionService regionService, IEfService efService)
+        public RegionController(IRegionService regionService)
         {
             _regionService = regionService;
-            _efService = efService;
         }
 
         // GET region/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
-            var regions = _regionService.FindAll(name);
-            if (regions == null)
+            var regions = _regionService.FindAll(name).ProjectTo<RegionDto>().ToList();
+            if (!regions.Any())
                 return BadRequest("No Regions");
 
             return Ok(regions);
@@ -38,11 +38,11 @@ namespace CMCore.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var regionInDb = _regionService.Exist(id);
+            var regionInDb = _regionService.Exist(id).ProjectTo<RegionDto>().FirstOrDefault();
             if (regionInDb == null)
                 return BadRequest("Region dosen't exist!");
 
-            return Ok(Mapper.Map<Region, RegionDto>(regionInDb));
+            return Ok(regionInDb);
         }
 
         // PATCH region/id
@@ -52,7 +52,7 @@ namespace CMCore.Controllers
             if (regionDto == null)
                 return BadRequest("You send a empty region");
 
-            var regionInDb = _regionService.Exist(id);
+            var regionInDb = _regionService.Exist(id).FirstOrDefault();
             if (regionInDb == null)
                 return BadRequest("Region dosen't exist!");
 
@@ -60,25 +60,28 @@ namespace CMCore.Controllers
             if (errorMsg != null)
                 return BadRequest(errorMsg);
 
-            // Countrie check
-            var countryValMsg = _regionService.RegionCountrieRelation(regionInDb, regionDto);
+            if (regionDto.Name == null)
+                regionDto.Name = regionInDb.Name;
+
+            // Add countrie relacion
+            var countryValMsg = _regionService.AddCountrieR(regionInDb, regionDto);
             if (countryValMsg != null)
                 return BadRequest(countryValMsg);
 
             var newRegion = _regionService.Edit(regionInDb, regionDto);
 
-            var saved = await _efService.SaveEf();
+            var saved = await _regionService.SaveEf();
             if (!saved)
                 return BadRequest();
 
-            return Ok(Mapper.Map<Region, RegionDto>(_regionService.Exist(newRegion.Id)));
+            return Ok(_regionService.Exist(newRegion.Id).ProjectTo<RegionDto>().FirstOrDefault());
         }
 
-        // Delete region/delete/id
+        // Delete region/id
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var regionInDb = _regionService.Exist(id);
+            var regionInDb = _regionService.Exist(id).Include(r => r.Countries).FirstOrDefault();
             if (regionInDb == null)
                 return BadRequest("Region dosen't exist!");
 
@@ -86,7 +89,7 @@ namespace CMCore.Controllers
             if (!delete)
                 return BadRequest("Region not deleted!");
 
-            var saved = await _efService.SaveEf();
+            var saved = await _regionService.SaveEf();
             if (!saved)
                 return BadRequest();
 
@@ -103,12 +106,12 @@ namespace CMCore.Controllers
 
             var newRegion = _regionService.CreateNew(regionDto);
 
-            // Countrie check
-            var countryValMsg = _regionService.RegionCountrieRelation(newRegion, regionDto);
+            // Add countrie relacion
+            var countryValMsg = _regionService.AddCountrieR(newRegion, regionDto);
             if (countryValMsg != null)
                 return BadRequest(countryValMsg);
 
-            var saved = await _efService.SaveEf();
+            var saved = await _regionService.SaveEf();
             if (!saved)
                 return BadRequest();
 

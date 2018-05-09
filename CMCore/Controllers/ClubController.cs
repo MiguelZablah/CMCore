@@ -1,19 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using System.Linq;
 using AutoMapper.QueryableExtensions;
-using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
-using CMCore.Models;
-using CMCore.Models.RelacionClass;
-using CMCore.Services;
 using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Type = CMCore.Models.Type;
 
 namespace CMCore.Controllers
 {
@@ -24,20 +14,18 @@ namespace CMCore.Controllers
     {
 
         private readonly IClubService _clubService;
-        private readonly IEfService _efService;
 
-        public ClubController(IClubService clubService, IEfService efService)
+        public ClubController(IClubService clubService)
         {
             _clubService = clubService;
-            _efService = efService;
         }
 
         // GET club/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
-            var club = _clubService.FindAll(name);
-            if (club == null)
+            var club = _clubService.FindAll(name).ProjectTo<ClubDto>().ToList();
+            if (!club.Any())
                 return BadRequest("No Clubs");
 
             return Ok(club);
@@ -47,11 +35,11 @@ namespace CMCore.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var clubInDb = _clubService.Exist(id);
+            var clubInDb = _clubService.Exist(id).ProjectTo<ClubDto>().FirstOrDefault();
             if (clubInDb == null)
                 return BadRequest("Club dosen't exist!");
 
-            return Ok(Mapper.Map<Club, ClubDto>(clubInDb));
+            return Ok(clubInDb);
         }
 
         // PATCH club/id

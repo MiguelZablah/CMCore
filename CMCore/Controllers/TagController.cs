@@ -5,7 +5,6 @@ using AutoMapper.QueryableExtensions;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
-using CMCore.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,12 +16,10 @@ namespace CMCore.Controllers
     public class TagController : Controller
     {
         private readonly ITagService _tagService;
-        private readonly IEfService _efService;
 
-        public TagController(ITagService tagService, IEfService efService)
+        public TagController(ITagService tagService)
         {
             _tagService = tagService;
-            _efService = efService;
         }
 
         // GET tag/
@@ -40,11 +37,11 @@ namespace CMCore.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var tagInDb = _tagService.Exist(id);
-            if (ReferenceEquals(tagInDb, default(Tag)))
+            var tagInDb = _tagService.Exist(id).ProjectTo<TagDto>().FirstOrDefault();
+            if (tagInDb == null)
                 return BadRequest("Tag dosen't exist!");
 
-            return Ok(Mapper.Map<Tag, TagDto>(tagInDb));
+            return Ok(tagInDb);
         }
 
         // PATCH tag/id
@@ -54,8 +51,8 @@ namespace CMCore.Controllers
             if (ReferenceEquals(tagDto, default(TagDto)))
                 return BadRequest("You send a empty countrie");
 
-            var tagInDb = _tagService.Exist(id);
-            if (ReferenceEquals(tagInDb, default(Tag)))
+            var tagInDb = _tagService.Exist(id).FirstOrDefault();
+            if (tagInDb == null)
                 return BadRequest("Tag dosen't exist!");
 
             var errorMsg = _tagService.CheckSameName(tagDto);
@@ -64,18 +61,18 @@ namespace CMCore.Controllers
 
             var newTag = _tagService.Edit(tagInDb, tagDto);
 
-            var saved = await _efService.SaveEf();
+            var saved = await _tagService.SaveEf();
             if (!saved)
                 return BadRequest();
 
-            return Ok(Mapper.Map<Tag, TagDto>(_tagService.Exist(newTag.Id)));
+            return Ok(_tagService.Exist(newTag.Id).ProjectTo<TagDto>().FirstOrDefault());
         }
 
         // DELETE tag/id
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var tagInDb = _tagService.Exist(id);
+            var tagInDb = _tagService.Exist(id).FirstOrDefault();
             if (tagInDb == null)
                 return BadRequest("Tag dosen't exist!");
 
@@ -83,7 +80,7 @@ namespace CMCore.Controllers
             if (!delete)
                 return BadRequest("Tag not deleted!");
 
-            var saved = await _efService.SaveEf();
+            var saved = await _tagService.SaveEf();
             if (!saved)
                 return BadRequest();
 
@@ -100,7 +97,7 @@ namespace CMCore.Controllers
 
             var newTag = _tagService.CreateNew(tagDto);
 
-            var saved = await _efService.SaveEf();
+            var saved = await _tagService.SaveEf();
             if (!saved)
                 return BadRequest();
 

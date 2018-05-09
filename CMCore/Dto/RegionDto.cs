@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using CMCore.Interfaces;
 
 namespace CMCore.DTO
 {
-    public class RegionDto
+    public class RegionDto : IEntity
     {
         public int Id { get; set; }
 

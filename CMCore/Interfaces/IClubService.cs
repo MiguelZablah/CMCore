@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using CMCore.DTO;
 using CMCore.Models;
 
@@ -6,14 +7,15 @@ namespace CMCore.Interfaces
 {
     public interface IClubService
     {
-        List<ClubDto> FindAll(string name);
-        Club Exist(int id);
-        Club ExistName(string name);
-        ClubDto Edit(Club clubInDb, ClubDto clubDto);
+        IQueryable<Club> FindAll(string name);
+        IQueryable<Club> Exist(int id);
+        IQueryable<Club> ExistName(string name);
         string Validate(ClubDto clubDto);
         string CheckSameName(ClubDto clubDto);
         string Compare(Club clubInDb, ClubDto clubDto);
-        Club CreateNew(ClubDto clubDto);
         bool Erase(Club clubInDb);
+        Task<bool> SaveEf();
+        ClubDto Edit(Club clubInDb, ClubDto clubDto);
+        Club CreateNew(ClubDto clubDto);
     }
 }

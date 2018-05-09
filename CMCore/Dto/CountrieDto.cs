@@ -1,6 +1,8 @@
-﻿namespace CMCore.DTO
+﻿using CMCore.Interfaces;
+
+namespace CMCore.DTO
 {
-    public class CountrieDto
+    public class CountrieDto : IEntity
     {
         public int Id { get; set; }
 

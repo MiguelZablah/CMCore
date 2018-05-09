@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using CMCore.DTO;
 using CMCore.Models;
 
@@ -6,14 +7,15 @@ namespace CMCore.Interfaces
 {
     public interface ICountryService
     {
-        List<CountrieDto> FindAll(string name);
-        Countrie Exist(int id);
-        CountrieDto Edit(Countrie countrieInDb, CountrieDto countrieDto);
+        IQueryable<Countrie> FindAll(string name);
+        IQueryable<Countrie> Exist(int id);
         string Validate(CountrieDto countrieDto);
         string CheckSameName(CountrieDto countriDto);
         string Compare(Countrie countrieInDb, CountrieDto countrieDto);
-        string EditSaveRegionR(CountrieDto countrieDto, Region regionInDb);
-        Countrie CreateNew(CountrieDto countrieDto);
         bool Erase(Countrie countrieInDb);
+        Task<bool> SaveEf();
+        string AddRegionR(CountrieDto countrieDto, Region regionInDb);
+        CountrieDto Edit(Countrie countrieInDb, CountrieDto countrieDto);
+        Countrie CreateNew(CountrieDto countrieDto);
     }
 }

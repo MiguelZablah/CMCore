@@ -32,8 +32,8 @@ namespace CMCore.Services
             {
                 Name = tagDto.Name
             };
-            DbSet.Add(newTag);
-            return newTag;
+
+            return AddEf(newTag) ? newTag : default(Tag);
         }
 
     }

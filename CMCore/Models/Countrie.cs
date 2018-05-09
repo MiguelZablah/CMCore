@@ -1,6 +1,8 @@
-﻿namespace CMCore.Models
+﻿using CMCore.Interfaces;
+
+namespace CMCore.Models
 {
-    public class Countrie
+    public class Countrie : IEntity
     {
         public int Id { get; set; }
 

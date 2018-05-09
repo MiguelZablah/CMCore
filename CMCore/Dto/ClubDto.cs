@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using CMCore.Interfaces;
 
 namespace CMCore.DTO
 {
-    public class ClubDto
+    public class ClubDto : IEntity
     {
         public int Id { get; set; }
 

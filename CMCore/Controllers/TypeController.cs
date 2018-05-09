@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using CMCore.DTO;
 using CMCore.Interfaces;
-using CMCore.Services;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Type = CMCore.Models.Type;
@@ -15,20 +16,18 @@ namespace CMCore.Controllers
     public class TypeController : Controller
     {
         private readonly ITypeService _typeService;
-        private readonly IEfService _efService;
 
-        public TypeController(ITypeService typeService, IEfService efService)
+        public TypeController(ITypeService typeService)
         {
             _typeService = typeService;
-            _efService = efService;
         }
 
         // GET type/
         [HttpGet]
         public IActionResult Get(string name = null)
         {
-            var types = _typeService.FindAll(name);
-            if (types == null)
+            var types = _typeService.FindAll(name).ProjectTo<TypeDto>().ToList();
+            if (!types.Any())
                 return BadRequest("No Types");
 
             return Ok(types);
@@ -38,11 +37,11 @@ namespace CMCore.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var typeInDb = _typeService.Exist(id);
+            var typeInDb = _typeService.Exist(id).ProjectTo<TagDto>().FirstOrDefault();
             if (typeInDb == null)
                 return BadRequest("Type dosen't exist!");
 
-            return Ok(Mapper.Map<Type, TypeDto>(typeInDb));
+            return Ok(typeInDb);
         }
 
         // PATCH /type/id
@@ -52,7 +51,7 @@ namespace CMCore.Controllers
             if (typeDto == null)
                 return BadRequest("You send a empty countrie");
 
-            var typeInDb = _typeService.Exist(id);
+            var typeInDb = _typeService.Exist(id).FirstOrDefault();
             if (typeInDb == null)
                 return BadRequest("Type dosen't exist!");
 
@@ -62,18 +61,18 @@ namespace CMCore.Controllers
 
             var newType = _typeService.Edit(typeInDb, typeDto);
 
-            var saved = await _efService.SaveEf();
+            var saved = await _typeService.SaveEf();
             if (!saved)
                 return BadRequest();
 
-            return Ok(Mapper.Map<Type, TypeDto>(_typeService.Exist(newType.Id)));
+            return Ok(_typeService.Exist(newType.Id).ProjectTo<TagDto>().FirstOrDefault());
         }
 
         // DELETE type/delete/id
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var typeInDb = _typeService.Exist(id);
+            var typeInDb = _typeService.Exist(id).FirstOrDefault();
             if (typeInDb == null)
                 return BadRequest("Type dosen't exist!");
 
@@ -81,7 +80,7 @@ namespace CMCore.Controllers
             if (!delete)
                 return BadRequest("Type not deleted!");
 
-            var saved = await _efService.SaveEf();
+            var saved = await _typeService.SaveEf();
             if (!saved)
                 return BadRequest();
 
@@ -98,7 +97,7 @@ namespace CMCore.Controllers
 
             var newType = _typeService.CreateNew(typeDto);
 
-            var saved = await _efService.SaveEf();
+            var saved = await _typeService.SaveEf();
             if (!saved)
                 return BadRequest();
 
