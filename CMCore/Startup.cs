@@ -50,6 +50,7 @@ namespace CMCore
             services.AddTransient<IRegionService, RegionService>();
             services.AddTransient<ITypeService, TypeService>();
             services.AddTransient<IClubService, ClubService>();
+            services.AddTransient<IFileService, FileService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

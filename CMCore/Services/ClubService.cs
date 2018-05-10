@@ -4,6 +4,7 @@ using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
+using CMCore.Models.RelacionClass;
 
 namespace CMCore.Services
 {
@@ -26,12 +27,18 @@ namespace CMCore.Services
             if (CompareString(clubInDb.Url, clubDto.Url))
                 clubInDb.Url = clubDto.Url;
 
+            if (string.IsNullOrWhiteSpace(clubInDb.Name))
+                clubInDb.Name = clubInDb.Name;
+
+            if (string.IsNullOrWhiteSpace(clubInDb.Url))
+                clubInDb.Url = clubDto.Url;
+
             return Mapper.Map<Club, ClubDto>(clubInDb);
         }
 
         public override string Validate(ClubDto clubDto)
         {
-            var checkName = CheckSameName(clubDto);
+            var checkName = CheckSameName(clubDto.Name);
             if (!string.IsNullOrWhiteSpace(checkName))
                 return checkName;
 
@@ -61,8 +68,8 @@ namespace CMCore.Services
             {
                 foreach (var region in clubDto.Regions)
                 {
-                    var countrieErMsg = _regionService.AddClubCountrieR(region, clubInDb);
-                    if (countrieErMsg != null)
+                    var countrieErMsg = _regionService.AddClubR(region, clubInDb);
+                    if (!string.IsNullOrWhiteSpace(countrieErMsg))
                         return countrieErMsg;
                 }
                 return null;
@@ -77,12 +84,70 @@ namespace CMCore.Services
             {
                 foreach (var type in clubDto.Types)
                 {
-                    var countrieErMsg = _typeService.AddClubR(type, clubInDb);
-                    if (countrieErMsg != null)
-                        return countrieErMsg;
+                    var typeErMsg = _typeService.AddClubR(type, clubInDb);
+                    if (!string.IsNullOrWhiteSpace(typeErMsg))
+                        return typeErMsg;
                 }
                 return null;
             }
+
+            return null;
+        }
+
+        public string AddFileR(ClubDto clubDto, File fileInDb)
+        {
+            var clubInDb = ExistName(clubDto.Name).FirstOrDefault();
+            if (clubInDb == null)
+            {
+                var createdClub = CreateNew(clubDto);
+                if (createdClub == null)
+                    return "Could not create Club";
+
+                var newClub = createdClub;
+                var newFileClub = new FileClub
+                {
+                    FileId = fileInDb.Id,
+                    ClubId = newClub.Id
+                };
+                Context.FileClubs.Add(newFileClub);
+
+                // Validate and Add Types
+                var typesErrMsg = AddTypeR(newClub, clubDto);
+                if (!string.IsNullOrWhiteSpace(typesErrMsg))
+                    return typesErrMsg;
+
+                // Validate and Add Region and/or countrie
+                var regionCountriErrMsg = AddRegionCountriR(newClub, clubDto);
+                if (!string.IsNullOrWhiteSpace(regionCountriErrMsg))
+                    return regionCountriErrMsg;
+
+
+                return null;
+            }
+
+            if (string.IsNullOrEmpty(clubDto.Name))
+                return "You send a null or empty Club!";
+
+            var regionHasClub = fileInDb.FileClubs.Any(cr => cr.ClubId== clubInDb.Id);
+            if (!regionHasClub)
+            {
+                var newFileClub = new FileClub
+                {
+                    FileId = fileInDb.Id,
+                    ClubId = clubInDb.Id
+                };
+                Context.FileClubs.Add(newFileClub);
+            }
+
+            // Validate and Add Types
+            var typesErrMsgg = AddTypeR(clubInDb, clubDto);
+            if (!string.IsNullOrWhiteSpace(typesErrMsgg))
+                return typesErrMsgg;
+
+            // Validate and Add Region and/or countrie
+            var regionCountriErrMsgg = AddRegionCountriR(clubInDb, clubDto);
+            if (!string.IsNullOrWhiteSpace(regionCountriErrMsgg))
+                return regionCountriErrMsgg;
 
             return null;
         }

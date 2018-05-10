@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -6,6 +7,7 @@ namespace CMCore.Helpers
 {
     public class FileSettings
     {
+        public string FilesFolderName { get; set; }
         public string[] AcceptedFileTypes { get; set; }
         public IDictionary<string, string> ContentTypes { get; set; }
 
@@ -21,5 +23,9 @@ namespace CMCore.Helpers
             return !ContentTypes.ContainsKey(ext) ? null : ContentTypes[ext];
         }
 
+        internal object GetContentType(object pathName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

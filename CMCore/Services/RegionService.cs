@@ -33,7 +33,7 @@ namespace CMCore.Services
                 foreach (var countrie in regionDto.Countries)
                 {
                     var countrieErMsg = _countryService.AddRegionR(countrie, regionInDb);
-                    if (countrieErMsg != null)
+                    if (!string.IsNullOrWhiteSpace(countrieErMsg))
                         return countrieErMsg;
                 }
                 return null;
@@ -42,16 +42,14 @@ namespace CMCore.Services
             return null;
         }
 
-        public string AddClubCountrieR(RegionDto regionDto, Club clubInDb)
+        public string AddClubR(RegionDto regionDto, Club clubInDb)
         {
             var regionInDb = ExistName(regionDto.Name).FirstOrDefault();
             if (regionInDb == null)
             {
-                var createdRegion = new Region
-                {
-                    Name = regionDto.Name
-                };
-                AddEf(createdRegion);
+                var createdRegion = CreateNew(regionDto);
+                if (createdRegion == null)
+                    return "Region couden't be created!";
 
                 var newRegion = createdRegion;
                 var newClubRegionRelation = new ClubRegion
@@ -63,7 +61,7 @@ namespace CMCore.Services
 
                 // Add countrie relacion
                 var countryValMsg = AddCountrieR(newRegion, regionDto);
-                if (countryValMsg != null)
+                if (!string.IsNullOrWhiteSpace(countryValMsg))
                     return countryValMsg;
 
                 return null;
@@ -85,7 +83,7 @@ namespace CMCore.Services
 
             // Add countrie relacion
             var countryValMsgg = AddCountrieR(regionInDb, regionDto);
-            if (countryValMsgg != null)
+            if (!string.IsNullOrWhiteSpace(countryValMsgg))
                 return countryValMsgg;
 
             return null;

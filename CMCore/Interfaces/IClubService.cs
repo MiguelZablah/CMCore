@@ -11,12 +11,13 @@ namespace CMCore.Interfaces
         IQueryable<Club> Exist(int id);
         IQueryable<Club> ExistName(string name);
         string Validate(ClubDto clubDto);
-        string CheckSameName(ClubDto clubDto);
+        string CheckSameName(string name);
         bool Erase(Club clubInDb);
         Task<bool> SaveEf();
         ClubDto Edit(Club clubInDb, ClubDto clubDto);
         Club CreateNew(ClubDto clubDto);
         string AddRegionCountriR(Club clubInDb, ClubDto clubDto);
         string AddTypeR(Club clubInDb, ClubDto clubDto);
+        string AddFileR(ClubDto clubDto, File fileInDb);
     }
 }

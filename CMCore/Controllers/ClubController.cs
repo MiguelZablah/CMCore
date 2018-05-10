@@ -28,11 +28,11 @@ namespace CMCore.Controllers
         [HttpGet]
         public IActionResult Get(string name = null)
         {
-            var club = _clubService.FindAll(name).ProjectTo<ClubDto>().ToList();
-            if (!club.Any())
+            var clubs = _clubService.FindAll(name).ProjectTo<ClubDto>().ToList();
+            if (!clubs.Any())
                 return BadRequest("No Clubs");
 
-            return Ok(club);
+            return Ok(clubs);
         }
 
         // GET club/id
@@ -57,32 +57,30 @@ namespace CMCore.Controllers
             if (clubInDb == null)
                 return BadRequest("Club dosen't exist!");
 
-            var errorMsg = _clubService.CheckSameName(clubDto);
+            var errorMsg = _clubService.CheckSameName(clubDto.Name);
             if (errorMsg != null)
                 return BadRequest(errorMsg);
 
-            clubDto = _clubService.Edit(clubInDb, clubDto);
-
             // Validate and Add Types
-            var countryValMsg = _clubService.AddTypeR(clubInDb, clubDto);
-            if (countryValMsg != null)
-                return BadRequest(countryValMsg);
+            var typesErrMsg = _clubService.AddTypeR(clubInDb, clubDto);
+            if (!string.IsNullOrWhiteSpace(typesErrMsg))
+                return BadRequest(typesErrMsg);
 
-            // Validate and Add Region and/or club
-            var countryValMsgg = _clubService.AddRegionCountriR(clubInDb, clubDto);
-            if (countryValMsgg != null)
-                return BadRequest(countryValMsgg);
+            // Validate and Add Region and/or countrie
+            var regionCountriErrMsg = _clubService.AddRegionCountriR(clubInDb, clubDto);
+            if (!string.IsNullOrWhiteSpace(regionCountriErrMsg))
+                return BadRequest(regionCountriErrMsg);
 
-            var newRegion = _clubService.Edit(clubInDb, clubDto);
+            clubDto = _clubService.Edit(clubInDb, clubDto);
 
             var saved = await _clubService.SaveEf();
             if (!saved)
                 return BadRequest();
 
-            return Ok(_clubService.Exist(newRegion.Id).ProjectTo<ClubDto>().FirstOrDefault());
+            return Ok(_clubService.Exist(clubDto.Id).ProjectTo<ClubDto>().FirstOrDefault());
         }
 
-        //    // Delete club/id
+        // Delete club/id
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -101,7 +99,7 @@ namespace CMCore.Controllers
             return Ok("Region Deleted: " + clubInDb.Name);
         }
 
-        //    // POST club/
+        // POST club/
         [HttpPost]
         public async Task<IActionResult> New([FromBody] ClubDto clubDto)
         {
@@ -112,14 +110,14 @@ namespace CMCore.Controllers
             var newClub = _clubService.CreateNew(clubDto);
 
             // Validate and Add Types
-            var countryValMsg = _clubService.AddTypeR(newClub, clubDto);
-            if (countryValMsg != null)
-                return BadRequest(countryValMsg);
+            var typesErrMsg = _clubService.AddTypeR(newClub, clubDto);
+            if (!string.IsNullOrWhiteSpace(typesErrMsg))
+                return BadRequest(typesErrMsg);
 
             // Validate and Add Region and/or club
-            var countryValMsgg = _clubService.AddRegionCountriR(newClub, clubDto);
-            if (countryValMsgg != null)
-                return BadRequest(countryValMsgg);
+            var regionCountriErrMsg = _clubService.AddRegionCountriR(newClub, clubDto);
+            if (!string.IsNullOrWhiteSpace(regionCountriErrMsg))
+                return BadRequest(regionCountriErrMsg);
 
             var saved = await _clubService.SaveEf();
             if (!saved)

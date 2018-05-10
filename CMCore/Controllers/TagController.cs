@@ -55,7 +55,7 @@ namespace CMCore.Controllers
             if (tagInDb == null)
                 return BadRequest("Tag dosen't exist!");
 
-            var errorMsg = _tagService.CheckSameName(tagDto);
+            var errorMsg = _tagService.CheckSameName(tagDto.Name);
             if (!string.IsNullOrWhiteSpace(errorMsg))
                 return BadRequest(errorMsg);
 

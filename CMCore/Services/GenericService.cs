@@ -60,19 +60,19 @@ namespace CMCore.Services
         public virtual string Validate(TDto tDto)
         {
 
-            var checkName = CheckSameName(tDto);
+            var checkName = CheckSameName(tDto.Name);
             if (checkName != null)
                 return checkName;
 
             return string.IsNullOrWhiteSpace(tDto.Name) ? "You send am invalid name!" : null;
         }
 
-        public string CheckSameName(TDto tDto)
+        public string CheckSameName(string checkName)
         {
-            if (string.IsNullOrWhiteSpace(tDto.Name))
+            if (string.IsNullOrWhiteSpace(checkName))
                 return null;
 
-            if (_dbSet.Any(t => t.Name.Equals(tDto.Name.ToLower())))
+            if (_dbSet.Any(t => t.Name.Equals(checkName.ToLower())))
                 return "That name already exist!";
 
             return null;

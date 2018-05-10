@@ -11,7 +11,7 @@ namespace CMCore.Interfaces
         IQueryable<Countrie> Exist(int id);
         IQueryable<Countrie> ExistName(string name);
         string Validate(CountrieDto countrieDto);
-        string CheckSameName(CountrieDto countriDto);
+        string CheckSameName(string name);
         bool Erase(Countrie countrieInDb);
         Task<bool> SaveEf();
         CountrieDto Edit(Countrie countrieInDb, CountrieDto countrieDto);

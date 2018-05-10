@@ -56,7 +56,7 @@ namespace CMCore.Controllers
             if (regionInDb == null)
                 return BadRequest("Region dosen't exist!");
 
-            var errorMsg = _regionService.CheckSameName(regionDto);
+            var errorMsg = _regionService.CheckSameName(regionDto.Name);
             if (errorMsg != null)
                 return BadRequest(errorMsg);
 

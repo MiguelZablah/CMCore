@@ -55,7 +55,7 @@ namespace CMCore.Controllers
             if (typeInDb == null)
                 return BadRequest("Type dosen't exist!");
 
-            var errorMsg = _typeService.CheckSameName(typeDto);
+            var errorMsg = _typeService.CheckSameName(typeDto.Name);
             if (errorMsg != null)
                 return BadRequest(errorMsg);
 

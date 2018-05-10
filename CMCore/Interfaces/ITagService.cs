@@ -11,10 +11,11 @@ namespace CMCore.Interfaces
         IQueryable<Tag> Exist(int id);
         IQueryable<Tag> ExistName(string name);
         string Validate(TagDto tagDto);
-        string CheckSameName(TagDto tagDto);
+        string CheckSameName(string name);
         bool Erase(Tag tagInDb);
         Task<bool> SaveEf();
         TagDto Edit(Tag tagInDb, TagDto tagDto);
         Tag CreateNew(TagDto tagDto);
+        string AddFileR(TagDto tagDto, File fileInDb);
     }
 }

@@ -55,7 +55,7 @@ namespace CMCore.Controllers
             if (countrieInDb == null)
                 return BadRequest("Country dosen't exist!");
 
-            var errorMsg = _countryService.CheckSameName(countrieDto);
+            var errorMsg = _countryService.CheckSameName(countrieDto.Name);
             if (errorMsg != null)
                 return BadRequest(errorMsg);
 

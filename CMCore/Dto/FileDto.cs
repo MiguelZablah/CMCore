@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using CMCore.Interfaces;
 
 namespace CMCore.DTO
 {
-    public class FileDto
+    public class FileDto : IEntity
     {
         public int Id { get; set; }
 

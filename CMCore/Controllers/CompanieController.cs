@@ -56,7 +56,7 @@ namespace CMCore.Controllers
             if (companieInDb == null)
                 return BadRequest("Companie dosen't exist!");
 
-            var errorMsg = _companieService.CheckSameName(companieDto);
+            var errorMsg = _companieService.CheckSameName(companieDto.Name);
             if (errorMsg != null)
                 return BadRequest(errorMsg);
 

@@ -29,11 +29,9 @@ namespace CMCore.Services
             var typenInDb = ExistName(typeDto.Name).FirstOrDefault();
             if (typenInDb == null)
             {
-                var createdType = new Type
-                {
-                    Name = typeDto.Name
-                };
-                AddEf(createdType);
+                var createdType = CreateNew(typeDto);
+                if (createdType == null)
+                    return "Type couden't be created!";
 
                 var newType = createdType;
                 var newClubType = new ClubType
