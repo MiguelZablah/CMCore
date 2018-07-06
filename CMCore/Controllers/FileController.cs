@@ -131,7 +131,7 @@ namespace CMCore.Controllers
             if (!string.IsNullOrWhiteSpace(validateFileMsg))
                 return BadRequest(validateFileMsg);
 
-            var newFile = await _fileService.CreateNew(file, fileName);
+            var newFile = _fileService.CreateNew(file, fileName);
             if (newFile == null)
                 return BadRequest("File not created!");
 

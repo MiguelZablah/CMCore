@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Amazon.S3;
+using AutoMapper;
 using CMCore.Data;
 using CMCore.Helpers;
 using CMCore.Interfaces;
@@ -34,6 +35,7 @@ namespace CMCore
                 options.MemoryBufferThreshold = int.MaxValue;
             });
             services.Configure<FileSettings>(Configuration.GetSection("FileSettings"));
+            services.Configure<AwsSettings>(Configuration.GetSection("AwsSettings"));
             services.AddCors(option =>
             {
                 option.AddPolicy("AllowSpecificOrigin", builder =>
@@ -42,6 +44,9 @@ namespace CMCore
                 });
             });
             services.AddAutoMapper();
+            // AWS
+            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+            services.AddAWSService<IAmazonS3>();
             // Services for api
             services.AddTransient(typeof(GenericService<,>));
             services.AddTransient<ITagService, TagService>();
@@ -51,6 +56,7 @@ namespace CMCore
             services.AddTransient<ITypeService, TypeService>();
             services.AddTransient<IClubService, ClubService>();
             services.AddTransient<IFileService, FileService>();
+            services.AddTransient<IAwsS3Service, AwsS3Service>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

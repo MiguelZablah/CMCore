@@ -23,17 +23,19 @@ namespace CMCore.Services
         private readonly ICompanieService _companieService;
         private readonly IClubService _clubService;
         private readonly FileSettings _fileSettings;
+        private readonly IAwsS3Service _awsS3Service;
 
         public FileService(ContentManagerDbContext context, IHostingEnvironment host, IOptions<FileSettings> fileSettings, 
             ITagService tagService, 
             ICompanieService companieService, 
-            IClubService clubService) 
+            IClubService clubService, IAwsS3Service awsS3Service) 
             : base(context)
         {
             _host = host;
             _tagService = tagService;
             _companieService = companieService;
             _clubService = clubService;
+            _awsS3Service = awsS3Service;
             _fileSettings = fileSettings.Value;
         }
 
@@ -95,7 +97,7 @@ namespace CMCore.Services
             return Mapper.Map<File, FileDto>(fileInDb);
         }
 
-        public async Task<File> CreateNew(IFormFile file, string fileName)
+        public File CreateNew(IFormFile file, string fileName)
         {
             var uploadFolderUrl = Path.Combine(_host.WebRootPath, _fileSettings.FilesFolderName);
             if (!Directory.Exists(uploadFolderUrl))
@@ -103,12 +105,11 @@ namespace CMCore.Services
 
             var fileExtension = Path.GetExtension(file.FileName).ToLower();
             var filePathName = Guid.NewGuid().ToString();
-            var filePath = Path.Combine(uploadFolderUrl, filePathName + fileExtension);
 
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
+            // S3 File Save
+            var fileSave = _awsS3Service.UploadFile(file, filePathName + fileExtension);
+            if (!string.IsNullOrWhiteSpace(fileSave))
+                return default(File);
 
             var extensionExist =  Context.Extensions.SingleOrDefault(e => e.Name == fileExtension);
             if (extensionExist == null)

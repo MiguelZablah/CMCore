@@ -34,7 +34,7 @@ namespace CMCore.Data
 
         public static void TablesToSeed(ContentManagerDbContext context)
         {
-            //context.Database.Migrate();
+            // Seed a Demo Data
 
             if (!context.Clubs.Any())
             {

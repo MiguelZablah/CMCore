@@ -18,7 +18,7 @@ namespace CMCore.Interfaces
         bool Erase(File fileInDb);
         Task<bool> SaveEf();
         FileDto Edit(File fileInDb, FileDto fileDto);
-        Task<File> CreateNew(IFormFile file, string fileName);
+        File CreateNew(IFormFile file, string fileName);
         string GetFilePath(File fileInDb);
         Task<IActionResult> DowloadFile(File fileInDb, Controller controller);
         string AddTagR(File fileInDb, FileDto fileDto);
