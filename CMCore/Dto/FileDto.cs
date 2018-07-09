@@ -13,6 +13,8 @@ namespace CMCore.DTO
 
         public string PathName { get; set; }
 
+        public string ThumbUrl { get; set; }
+
         public IList<TagDto> Tags { get; set; }
 
         public IList<CompanieDto> Companies { get; set; }
