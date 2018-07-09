@@ -33,6 +33,9 @@ namespace CMCore.Services
 
         public string DowloadUrl(string fileName, string fileRegion)
         {
+            if (!CheckRequiredFields(fileName))
+                return null;
+
             var newS3Client = RegionEndpoint.GetBySystemName(_awSettings.Region);
             if (!string.IsNullOrWhiteSpace(fileRegion))
                 newS3Client = RegionEndpoint.GetBySystemName(fileRegion);
@@ -42,6 +45,19 @@ namespace CMCore.Services
                 return null;
 
             return urlString;
+        }
+
+        public string DeleteFile(string fileName, string fileRegion)
+        {
+            if (!CheckRequiredFields(fileName))
+                return "S3 Missing Data!";
+
+            var newS3Client = RegionEndpoint.GetBySystemName(_awSettings.Region);
+            if (!string.IsNullOrWhiteSpace(fileRegion))
+                newS3Client = RegionEndpoint.GetBySystemName(fileRegion);
+
+            DeleteS3Async(fileName, newS3Client).Wait();
+            return null;
         }
 
         private bool CheckRequiredFields(string keyName)
@@ -68,9 +84,7 @@ namespace CMCore.Services
                 var fileStream = file.OpenReadStream();
 
                 await fileTransferUtility.UploadAsync(fileStream, _awSettings.BucketName, _awSettings.S3Folder + keyName);
-
                 Console.WriteLine("Upload completed");
-
             }
             catch (AmazonS3Exception e)
             {
@@ -82,7 +96,30 @@ namespace CMCore.Services
                 var err = $"Unknown encountered on server. Message:'{e.Message}' when writing an object";
                 Console.WriteLine(err);
             }
+        }
 
+        private async Task DeleteS3Async(string keyName, RegionEndpoint region)
+        {
+            var client = new AmazonS3Client(region);
+            try
+            {
+                var deleteObjectRequest = new DeleteObjectRequest
+                {
+                    BucketName = _awSettings.BucketName,
+                    Key = _awSettings.S3Folder + keyName
+                };
+
+                Console.WriteLine("Deleting an object");
+                await client.DeleteObjectAsync(deleteObjectRequest);
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Message:'{0}' when writing an object", e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+            }
         }
 
         private string GeneratePreSignedUrl(string keyName, RegionEndpoint region)

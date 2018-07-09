@@ -104,7 +104,7 @@ namespace CMCore.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var fileInDb = await _fileService.Exist(id).ProjectTo<File>().FirstOrDefaultAsync();
+            var fileInDb = await _fileService.Exist(id).FirstOrDefaultAsync();
             if (fileInDb == null)
                 return BadRequest("File dosen't exist!");
 

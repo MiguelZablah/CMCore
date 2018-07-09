@@ -41,21 +41,11 @@ namespace CMCore.Services
 
         public bool EraseFile(File fileInDb)
         {
-            var filePath = Path.Combine(_host.WebRootPath, _fileSettings.FilesFolderName, fileInDb.PathName);
-
-            if (!System.IO.File.Exists(filePath))
+            var res = _awsS3Service.DeleteFile(fileInDb.PathName, fileInDb.AwsRegion);
+            if (!string.IsNullOrWhiteSpace(res))
                 return false;
-            try
-            {
-                System.IO.File.Delete(filePath);
-                return true;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
 
+            return true;
         }
 
         public string ValidateFile(IFormFile file, string fileName)

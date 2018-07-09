@@ -6,5 +6,6 @@ namespace CMCore.Interfaces
     {
         string UploadFile(IFormFile file, string fileName);
         string DowloadUrl(string fileName, string fileRegion = null);
+        string DeleteFile(string fileName, string fileRegion);
     }
 }
