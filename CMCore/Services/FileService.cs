@@ -9,7 +9,6 @@ using CMCore.DTO;
 using CMCore.Helpers;
 using CMCore.Interfaces;
 using CMCore.Models;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -19,20 +18,18 @@ namespace CMCore.Services
 {
     public class FileService : GenericService<File, FileDto>, IFileService
     {
-        private readonly IHostingEnvironment _host;
         private readonly ITagService _tagService;
         private readonly ICompanieService _companieService;
         private readonly IClubService _clubService;
         private readonly FileSettings _fileSettings;
         private readonly IAwsS3Service _awsS3Service;
 
-        public FileService(ContentManagerDbContext context, IHostingEnvironment host, IOptions<FileSettings> fileSettings, 
+        public FileService(ContentManagerDbContext context, IOptions<FileSettings> fileSettings, 
             ITagService tagService, 
             ICompanieService companieService, 
             IClubService clubService, IAwsS3Service awsS3Service) 
             : base(context)
         {
-            _host = host;
             _tagService = tagService;
             _companieService = companieService;
             _clubService = clubService;
@@ -93,10 +90,6 @@ namespace CMCore.Services
 
         public File CreateNew(IFormFile file, string fileName)
         {
-            var uploadFolderUrl = Path.Combine(_host.WebRootPath, _fileSettings.FilesFolderName);
-            if (!Directory.Exists(uploadFolderUrl))
-                Directory.CreateDirectory(uploadFolderUrl);
-
             var fileExtension = Path.GetExtension(file.FileName).ToLower();
             var filePathName = Guid.NewGuid().ToString();
 

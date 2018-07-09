@@ -7,7 +7,6 @@ namespace CMCore.Helpers
 {
     public class FileSettings
     {
-        public string FilesFolderName { get; set; }
         public string[] AcceptedFileTypes { get; set; }
         public IDictionary<string, string> ContentTypes { get; set; }
 
