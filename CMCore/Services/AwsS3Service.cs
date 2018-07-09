@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
+using Amazon.S3.Model;
 using Amazon.S3.Transfer;
 using CMCore.Helpers;
 using CMCore.Interfaces;
@@ -28,6 +29,15 @@ namespace CMCore.Services
 
             UploadS3Async(file, fileName).Wait();
             return null;
+        }
+
+        public string DowloadUrl(string fileName)
+        {
+            var urlString = GeneratePreSignedUrl(fileName);
+            if(string.IsNullOrWhiteSpace(urlString))
+                return null;
+
+            return urlString;
         }
 
         private bool CheckRequiredFields(string keyName)
@@ -69,6 +79,30 @@ namespace CMCore.Services
                 Console.WriteLine(err);
             }
 
+        }
+
+        private string GeneratePreSignedUrl(string keyName)
+        {
+            var urlString = "";
+            try
+            {
+                var request1 = new GetPreSignedUrlRequest
+                {
+                    BucketName = _awSettings.BucketName,
+                    Key = _awSettings.S3Folder + keyName,
+                    Expires = DateTime.Now.AddMinutes(_awSettings.TimePreSigUrl)
+                };
+                urlString = _s3Client.GetPreSignedURL(request1);
+            }
+            catch (AmazonS3Exception e)
+            {
+                Console.WriteLine("Error encountered on server. Message:'{0}' when writing an object", e.Message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+            }
+            return urlString;
         }
     }
 }

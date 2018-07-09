@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Net;
 using AutoMapper;
 using CMCore.Data;
 using CMCore.DTO;
@@ -132,39 +132,32 @@ namespace CMCore.Services
             return AddEf(newFile) ? newFile : default(File);
         }
 
-        public string GetFilePath(File fileInDb)
+        public Stream GetStreamFromUrl(string url)
         {
-            if (string.IsNullOrWhiteSpace(_fileSettings.GetContentType(fileInDb.PathName)))
-                return null;
+            byte[] imageData;
 
-            var filePath = Path.Combine(_host.WebRootPath, _fileSettings.FilesFolderName, fileInDb.PathName);
-            if (string.IsNullOrWhiteSpace(filePath))
-                return null;
+            using (var wc = new WebClient())
+                imageData = wc.DownloadData(url);
 
-            return filePath;
+            return new MemoryStream(imageData);
         }
 
-        public async Task<IActionResult> DowloadFile(File fileInDb, Controller controller)
+        public IActionResult DowloadFile(File fileInDb, Controller controller)
         {
             if (fileInDb == null)
                 return controller.NotFound();
 
-            var filePath = GetFilePath(fileInDb);
-            if (string.IsNullOrWhiteSpace(filePath))
-                return controller.BadRequest("File Path not found!");
-
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(filePath, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
+            var fileUrl = _awsS3Service.DowloadUrl(fileInDb.PathName);
+            if (string.IsNullOrWhiteSpace(fileUrl))
+                return controller.BadRequest("File Url not found!");
 
             var contentType = _fileSettings.GetContentType(fileInDb.PathName);
             if (string.IsNullOrWhiteSpace(contentType))
                 return controller.BadRequest("Content Type dosen't exist!");
 
-            memory.Position = 0;
-            return controller.File(memory, contentType, Path.GetFileName(filePath));
+            var stream = GetStreamFromUrl(fileUrl);
+
+            return controller.File(stream, contentType);
         }
 
         public string AddTagR(File fileInDb, FileDto fileDto)

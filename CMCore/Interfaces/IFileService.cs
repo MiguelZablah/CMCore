@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using CMCore.DTO;
-using CMCore.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using File = CMCore.Models.File;
 
 namespace CMCore.Interfaces
 {
@@ -19,8 +19,7 @@ namespace CMCore.Interfaces
         Task<bool> SaveEf();
         FileDto Edit(File fileInDb, FileDto fileDto);
         File CreateNew(IFormFile file, string fileName);
-        string GetFilePath(File fileInDb);
-        Task<IActionResult> DowloadFile(File fileInDb, Controller controller);
+        IActionResult DowloadFile(File fileInDb, Controller controller);
         string AddTagR(File fileInDb, FileDto fileDto);
         string AddCompanieR(File fileInDb, FileDto fileDto);
         string AddClubR(File fileInDb, FileDto fileDto);
