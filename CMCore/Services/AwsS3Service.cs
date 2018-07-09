@@ -84,7 +84,7 @@ namespace CMCore.Services
                 var fileStream = file.OpenReadStream();
 
                 await fileTransferUtility.UploadAsync(fileStream, _awSettings.BucketName, _awSettings.S3Folder + keyName);
-                Console.WriteLine("Upload completed");
+                //Console.WriteLine("Upload completed");
             }
             catch (AmazonS3Exception e)
             {
@@ -109,7 +109,7 @@ namespace CMCore.Services
                     Key = _awSettings.S3Folder + keyName
                 };
 
-                Console.WriteLine("Deleting an object");
+                //Console.WriteLine("Deleting an object");
                 await client.DeleteObjectAsync(deleteObjectRequest);
             }
             catch (AmazonS3Exception e)

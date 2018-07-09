@@ -2,6 +2,8 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using AutoMapper;
 using CMCore.Data;
 using CMCore.DTO;
@@ -84,6 +86,9 @@ namespace CMCore.Services
             if (string.IsNullOrWhiteSpace(fileInDb.Description))
                 fileInDb.Description = fileDto.Description;
 
+            // So you can't change the thumbUrl
+            fileDto.ThumbUrl = fileInDb.ThumbUrl;
+
             return Mapper.Map<File, FileDto>(fileInDb);
         }
 
@@ -121,17 +126,24 @@ namespace CMCore.Services
             return AddEf(newFile) ? newFile : default(File);
         }
 
-        public Stream GetStreamFromUrl(string url)
+        private async Task<byte[]> GetStreamFromUrl(string url)
         {
-            byte[] imageData;
+            using (var client = new HttpClient())
+            {
 
-            using (var wc = new WebClient())
-                imageData = wc.DownloadData(url);
+                using (var result = await client.GetAsync(url))
+                {
+                    if (result.IsSuccessStatusCode)
+                    {
+                        return await result.Content.ReadAsByteArrayAsync();
+                    }
 
-            return new MemoryStream(imageData);
+                }
+            }
+            return null;
         }
 
-        public IActionResult DowloadFile(File fileInDb, Controller controller)
+        public async Task<IActionResult> DowloadFile(File fileInDb, Controller controller)
         {
             if (fileInDb == null)
                 return controller.NotFound();
@@ -144,9 +156,11 @@ namespace CMCore.Services
             if (string.IsNullOrWhiteSpace(contentType))
                 return controller.BadRequest("Content Type dosen't exist!");
 
-            var stream = GetStreamFromUrl(fileUrl);
+            var fileBytes = await GetStreamFromUrl(fileUrl);
+            if (fileBytes?.Length > 0)
+                return controller.File(fileBytes, contentType, fileInDb.PathName);
 
-            return controller.File(stream, contentType);
+            return controller.BadRequest("Ups! Can't get file, try latter!");
         }
 
         public string AddTagR(File fileInDb, FileDto fileDto)

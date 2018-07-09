@@ -58,7 +58,7 @@ namespace CMCore.Controllers
             if (String.IsNullOrEmpty(fileInDb.PathName))
                 return BadRequest("File path name not found");
 
-            return _fileService.DowloadFile(fileInDb, this);
+            return await _fileService.DowloadFile(fileInDb, this);
         }
 
         // PATCH File/id
