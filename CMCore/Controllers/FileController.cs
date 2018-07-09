@@ -2,7 +2,6 @@
 using CMCore.DTO;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -55,7 +54,7 @@ namespace CMCore.Controllers
             if (fileInDb == null)
                 return NotFound();
 
-            if (String.IsNullOrEmpty(fileInDb.PathName))
+            if (string.IsNullOrEmpty(fileInDb.PathName))
                 return BadRequest("File path name not found");
 
             return await _fileService.DowloadFile(fileInDb, this);
