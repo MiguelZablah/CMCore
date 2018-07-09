@@ -28,12 +28,16 @@ namespace CMCore.Services
                 return "S3 Missing Data!";
 
             UploadS3Async(file, fileName).Wait();
-            return null;
+            return _awSettings.Region;
         }
 
-        public string DowloadUrl(string fileName)
+        public string DowloadUrl(string fileName, string fileRegion)
         {
-            var urlString = GeneratePreSignedUrl(fileName);
+            var newS3Client = RegionEndpoint.GetBySystemName(_awSettings.Region);
+            if (!string.IsNullOrWhiteSpace(fileRegion))
+                newS3Client = RegionEndpoint.GetBySystemName(fileRegion);
+
+            var urlString = GeneratePreSignedUrl(fileName, newS3Client);
             if(string.IsNullOrWhiteSpace(urlString))
                 return null;
 
@@ -81,9 +85,10 @@ namespace CMCore.Services
 
         }
 
-        private string GeneratePreSignedUrl(string keyName)
+        private string GeneratePreSignedUrl(string keyName, RegionEndpoint region)
         {
             var urlString = "";
+            var client = new AmazonS3Client(region);
             try
             {
                 var request1 = new GetPreSignedUrlRequest
@@ -92,7 +97,7 @@ namespace CMCore.Services
                     Key = _awSettings.S3Folder + keyName,
                     Expires = DateTime.Now.AddMinutes(_awSettings.TimePreSigUrl)
                 };
-                urlString = _s3Client.GetPreSignedURL(request1);
+                urlString = client.GetPreSignedURL(request1);
             }
             catch (AmazonS3Exception e)
             {

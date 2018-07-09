@@ -21,6 +21,10 @@ namespace CMCore.Models
 
         public string PathName { get; set; }
 
+        public string AwsRegion { get; set; }
+
+        public string ThumbUrl { get; set; }
+
         public IList<FileTag> FileTags { get; set; }
 
         public int ExtensionId { get; set; }

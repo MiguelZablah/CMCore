@@ -107,10 +107,8 @@ namespace CMCore.Services
             var filePathName = Guid.NewGuid().ToString();
 
             // S3 File Save
-            var fileSave = _awsS3Service.UploadFile(file, filePathName + fileExtension);
-            if (!string.IsNullOrWhiteSpace(fileSave))
-                return default(File);
-
+            var fileRegion = _awsS3Service.UploadFile(file, filePathName + fileExtension);
+            
             var extensionExist =  Context.Extensions.SingleOrDefault(e => e.Name == fileExtension);
             if (extensionExist == null)
             {
@@ -126,6 +124,7 @@ namespace CMCore.Services
             {
                 Name = fileName,
                 PathName = filePathName + fileExtension,
+                AwsRegion = fileRegion,
                 ExtensionId = extensionExist.Id
             };
 
@@ -147,7 +146,7 @@ namespace CMCore.Services
             if (fileInDb == null)
                 return controller.NotFound();
 
-            var fileUrl = _awsS3Service.DowloadUrl(fileInDb.PathName);
+            var fileUrl = _awsS3Service.DowloadUrl(fileInDb.PathName, fileInDb.AwsRegion);
             if (string.IsNullOrWhiteSpace(fileUrl))
                 return controller.BadRequest("File Url not found!");
 

@@ -11,9 +11,10 @@ using System;
 namespace CMCore.Migrations
 {
     [DbContext(typeof(ContentManagerDbContext))]
-    partial class ContentManagerDbContexModelSnapshot : ModelSnapshot
+    [Migration("20180709170835_AddThumbUrlAndAwsRegion")]
+    partial class AddThumbUrlAndAwsRegion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
