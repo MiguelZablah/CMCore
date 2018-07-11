@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Amazon.S3;
+using AutoMapper;
 using CMCore.Data;
 using CMCore.Helpers;
 using CMCore.Interfaces;
@@ -43,6 +44,9 @@ namespace CMCore
                 });
             });
             services.AddAutoMapper();
+            // AWS
+            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+            services.AddAWSService<IAmazonS3>();
             // Services for api
             services.AddTransient(typeof(GenericService<,>));
             services.AddTransient<ITagService, TagService>();
