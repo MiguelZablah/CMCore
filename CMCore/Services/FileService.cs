@@ -94,7 +94,7 @@ namespace CMCore.Services
             var filePathName = Guid.NewGuid().ToString();
 
             // S3 File Save
-            var resTuple = _awsS3Service.UploadFile(file, filePathName + fileExtension);
+            var resTuple = _awsS3Service.UploadFile(file, filePathName, fileExtension);
             
             var extensionExist =  Context.Extensions.SingleOrDefault(e => e.Name == fileExtension);
             if (extensionExist == null)

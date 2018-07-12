@@ -22,14 +22,14 @@ namespace CMCore.Services
             _s3Client = new AmazonS3Client(RegionEndpoint.GetBySystemName(_awSettings.Region));
         }
 
-        public Tuple<string, string> UploadFile(IFormFile file, string fileName)
+        public Tuple<string, string> UploadFile(IFormFile file, string fileName, string extension)
         {
-            if(!CheckRequiredFields(fileName))
+            if(!CheckRequiredFields(fileName + extension))
                 return null;
 
-            UploadS3Async(file, fileName).Wait();
+            UploadS3Async(file, fileName + extension).Wait();
 
-            var tuple = new Tuple<string, string>(_awSettings.Region, $"https://s3.amazonaws.com/{_awSettings.BucketName}/{_awSettings.S3FolderThumbs}{fileName}");
+            var tuple = new Tuple<string, string>(_awSettings.Region, $"https://s3.amazonaws.com/{_awSettings.BucketName}/{_awSettings.S3FolderThumbs}{fileName}.jpg");
             return tuple;
         }
 
@@ -105,12 +105,15 @@ namespace CMCore.Services
         private async Task DeleteS3Async(string keyName, RegionEndpoint region, bool deleteThumb)
         {
             var client = new AmazonS3Client(region);
+            var keyString = deleteThumb
+                ? _awSettings.S3FolderThumbs + keyName.Remove(keyName.LastIndexOf(".", StringComparison.Ordinal) + 1) + "jpg"
+                : _awSettings.S3Folder + keyName;
             try
             {
                 var deleteObjectRequest = new DeleteObjectRequest
                 {
                     BucketName = _awSettings.BucketName,
-                    Key = deleteThumb ? _awSettings.S3FolderThumbs + keyName : _awSettings.S3Folder + keyName
+                    Key = keyString
                 };
 
                 //Console.WriteLine("Deleting an object");

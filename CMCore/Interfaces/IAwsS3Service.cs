@@ -5,7 +5,7 @@ namespace CMCore.Interfaces
 {
     public interface IAwsS3Service
     {
-        Tuple<string, string> UploadFile(IFormFile file, string fileName);
+        Tuple<string, string> UploadFile(IFormFile file, string fileName, string extension);
         string DowloadUrl(string fileName, string fileRegion = null);
         string DeleteFile(string fileName, string fileRegion, bool deleteThumb = false);
     }
