@@ -39,7 +39,7 @@ namespace CMCore.Services
 
         public bool EraseFile(File fileInDb)
         {
-            var res = _awsS3Service.DeleteFile(fileInDb.PathName, fileInDb.AwsRegion);
+            var res = _awsS3Service.DeleteFile(fileInDb.PathName, fileInDb.AwsRegion, !string.IsNullOrWhiteSpace(fileInDb.ThumbUrl));
             if (!string.IsNullOrWhiteSpace(res))
                 return false;
 
@@ -94,7 +94,7 @@ namespace CMCore.Services
             var filePathName = Guid.NewGuid().ToString();
 
             // S3 File Save
-            var fileRegion = _awsS3Service.UploadFile(file, filePathName + fileExtension);
+            var resTuple = _awsS3Service.UploadFile(file, filePathName + fileExtension);
             
             var extensionExist =  Context.Extensions.SingleOrDefault(e => e.Name == fileExtension);
             if (extensionExist == null)
@@ -111,7 +111,8 @@ namespace CMCore.Services
             {
                 Name = fileName,
                 PathName = filePathName + fileExtension,
-                AwsRegion = fileRegion,
+                AwsRegion = resTuple.Item1,
+                ThumbUrl = resTuple.Item2,
                 ExtensionId = extensionExist.Id
             };
 

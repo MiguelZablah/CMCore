@@ -22,13 +22,15 @@ namespace CMCore.Services
             _s3Client = new AmazonS3Client(RegionEndpoint.GetBySystemName(_awSettings.Region));
         }
 
-        public string UploadFile(IFormFile file, string fileName)
+        public Tuple<string, string> UploadFile(IFormFile file, string fileName)
         {
             if(!CheckRequiredFields(fileName))
-                return "S3 Missing Data!";
+                return null;
 
             UploadS3Async(file, fileName).Wait();
-            return _awSettings.Region;
+
+            var tuple = new Tuple<string, string>(_awSettings.Region, $"https://s3.amazonaws.com/{_awSettings.BucketName}/{_awSettings.S3FolderThumbs}{fileName}");
+            return tuple;
         }
 
         public string DowloadUrl(string fileName, string fileRegion)
@@ -47,7 +49,7 @@ namespace CMCore.Services
             return urlString;
         }
 
-        public string DeleteFile(string fileName, string fileRegion)
+        public string DeleteFile(string fileName, string fileRegion, bool deleteThumb)
         {
             if (!CheckRequiredFields(fileName))
                 return "S3 Missing Data!";
@@ -56,7 +58,9 @@ namespace CMCore.Services
             if (!string.IsNullOrWhiteSpace(fileRegion))
                 newS3Client = RegionEndpoint.GetBySystemName(fileRegion);
 
-            DeleteS3Async(fileName, newS3Client).Wait();
+            DeleteS3Async(fileName, newS3Client, false).Wait();
+            if(deleteThumb)
+                DeleteS3Async(fileName, newS3Client, true).Wait();
             return null;
         }
 
@@ -98,7 +102,7 @@ namespace CMCore.Services
             }
         }
 
-        private async Task DeleteS3Async(string keyName, RegionEndpoint region)
+        private async Task DeleteS3Async(string keyName, RegionEndpoint region, bool deleteThumb)
         {
             var client = new AmazonS3Client(region);
             try
@@ -106,7 +110,7 @@ namespace CMCore.Services
                 var deleteObjectRequest = new DeleteObjectRequest
                 {
                     BucketName = _awSettings.BucketName,
-                    Key = _awSettings.S3Folder + keyName
+                    Key = deleteThumb ? _awSettings.S3FolderThumbs + keyName : _awSettings.S3Folder + keyName
                 };
 
                 //Console.WriteLine("Deleting an object");
@@ -114,11 +118,11 @@ namespace CMCore.Services
             }
             catch (AmazonS3Exception e)
             {
-                Console.WriteLine("Error encountered on server. Message:'{0}' when writing an object", e.Message);
+                Console.WriteLine($"Error encountered on server. Message:'{e.Message}' when writing an object");
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+                Console.WriteLine($"Unknown encountered on server. Message:'{e.Message}' when writing an object");
             }
         }
 
@@ -138,11 +142,11 @@ namespace CMCore.Services
             }
             catch (AmazonS3Exception e)
             {
-                Console.WriteLine("Error encountered on server. Message:'{0}' when writing an object", e.Message);
+                Console.WriteLine($"Error encountered on server. Message:'{e.Message}' when writing an object");
             }
             catch (Exception e)
             {
-                Console.WriteLine("Unknown encountered on server. Message:'{0}' when writing an object", e.Message);
+                Console.WriteLine($"Unknown encountered on server. Message:'{e.Message}' when writing an object");
             }
             return urlString;
         }

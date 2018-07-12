@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 
 namespace CMCore.Interfaces
 {
     public interface IAwsS3Service
     {
-        string UploadFile(IFormFile file, string fileName);
+        Tuple<string, string> UploadFile(IFormFile file, string fileName);
         string DowloadUrl(string fileName, string fileRegion = null);
-        string DeleteFile(string fileName, string fileRegion);
+        string DeleteFile(string fileName, string fileRegion, bool deleteThumb = false);
     }
 }
