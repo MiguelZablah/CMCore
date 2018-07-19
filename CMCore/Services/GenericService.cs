@@ -21,12 +21,10 @@ namespace CMCore.Services
 
         public IQueryable<T> FindAll(string name)
         {
-
             if (string.IsNullOrWhiteSpace(name))
                 return _dbSet.AsQueryable();
 
             return _dbSet.Where(f => f.Name.ToLower().Contains(name)).AsQueryable();
-
         }
 
         public IQueryable<T> Exist(int id)
@@ -64,7 +62,7 @@ namespace CMCore.Services
             if (checkName != null)
                 return checkName;
 
-            return string.IsNullOrWhiteSpace(tDto.Name) ? "You send am invalid name!" : null;
+            return string.IsNullOrWhiteSpace(tDto.Name) ? "You send an invalid name!" : null;
         }
 
         public string CheckSameName(string checkName)

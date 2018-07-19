@@ -57,7 +57,11 @@ namespace CMCore.Controllers
             if (string.IsNullOrEmpty(fileInDb.PathName))
                 return BadRequest("File path name not found");
 
-            return await _fileService.DowloadFile(fileInDb, this);
+            var preSignUrl = _fileService.DowloadFile(fileInDb);
+            if (string.IsNullOrWhiteSpace(preSignUrl))
+                return BadRequest("File can't download right know!");
+
+            return Ok(preSignUrl);
         }
 
         // PATCH File/id
@@ -65,11 +69,11 @@ namespace CMCore.Controllers
         public async Task<IActionResult> Edit(int id, [FromBody] FileDto fileDto)
         {
             if (fileDto == null)
-                return BadRequest("You send an invalid club");
+                return BadRequest("You send an invalid file");
 
             var fileInDb = _fileService.Exist(id).FirstOrDefault();
             if (fileInDb == null)
-                return BadRequest("Club dosen't exist!");
+                return BadRequest("File dosen't exist!");
 
             var errorMsg = _fileService.CheckSameName(fileDto.Name);
             if (errorMsg != null)
@@ -94,7 +98,7 @@ namespace CMCore.Controllers
 
             var saved = await _fileService.SaveEf();
             if (!saved)
-                return BadRequest();
+                return BadRequest("File can't be save!");
 
             return Ok(_fileService.Exist(fileDto.Id).ProjectTo<FileDto>().FirstOrDefault());
         }

@@ -19,7 +19,7 @@ namespace CMCore.Interfaces
         Task<bool> SaveEf();
         FileDto Edit(File fileInDb, FileDto fileDto);
         File CreateNew(IFormFile file, string fileName);
-        Task<IActionResult> DowloadFile(File fileInDb, Controller controller);
+        string DowloadFile(File fileInDb);
         string AddTagR(File fileInDb, FileDto fileDto);
         string AddCompanieR(File fileInDb, FileDto fileDto);
         string AddClubR(File fileInDb, FileDto fileDto);

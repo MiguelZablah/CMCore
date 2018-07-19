@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CMCore.Interfaces;
+using CMCore.Models;
 
 namespace CMCore.DTO
 {
@@ -14,6 +15,8 @@ namespace CMCore.DTO
         public string PathName { get; set; }
 
         public string ThumbUrl { get; set; }
+
+        public string Extension { get; set; }
 
         public IList<TagDto> Tags { get; set; }
 

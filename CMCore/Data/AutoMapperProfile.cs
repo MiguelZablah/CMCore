@@ -14,7 +14,8 @@ namespace CMCore.Data
             CreateMap<File, FileDto>()
                 .ForMember(dto => dto.Tags, opt => opt.MapFrom(ft => ft.FileTags.Select(t => t.Tag)))
                 .ForMember(dto => dto.Clubs, opt => opt.MapFrom(fc => fc.FileClubs.Select(c => c.Club)))
-                .ForMember(dto => dto.Companies, opt => opt.MapFrom(fco => fco.FileCompanies.Select(c => c.Companie)));
+                .ForMember(dto => dto.Companies, opt => opt.MapFrom(fco => fco.FileCompanies.Select(c => c.Companie)))
+                .ForMember(dto => dto.Extension, opt => opt.MapFrom(fco => fco.Extension.Name));
 
             CreateMap<Tag, TagDto>();
 
@@ -34,7 +35,7 @@ namespace CMCore.Data
 
             // Dto to Domain
             CreateMap<FileDto, File>()
-                .ForMember(t => t.Id, opt => opt.Ignore());
+                .ForMember(f => f.Id, opt => opt.Ignore());
 
             CreateMap<TagDto, Tag>()
                 .ForMember(t => t.Id, opt => opt.Ignore());
@@ -43,16 +44,16 @@ namespace CMCore.Data
                 .ForMember(c => c.Id, opt => opt.Ignore());
 
             CreateMap<RegionDto, Region>()
-                .ForMember(c => c.Id, opt => opt.Ignore());
+                .ForMember(r => r.Id, opt => opt.Ignore());
 
             CreateMap<CountrieDto, Countrie>()
                 .ForMember(c => c.Id, opt => opt.Ignore());
 
             CreateMap<TypeDto, Type>()
-                .ForMember(c => c.Id, opt => opt.Ignore());
+                .ForMember(t => t.Id, opt => opt.Ignore());
 
             CreateMap<ExtensionDto, Extension>()
-                .ForMember(c => c.Id, opt => opt.Ignore());
+                .ForMember(e => e.Id, opt => opt.Ignore());
 
             CreateMap<CompanieDto, Companie>()
                 .ForMember(c => c.Id, opt => opt.Ignore());

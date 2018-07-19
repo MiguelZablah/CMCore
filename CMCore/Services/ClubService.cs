@@ -128,7 +128,7 @@ namespace CMCore.Services
             if (string.IsNullOrEmpty(clubDto.Name))
                 return "You send a null or empty Club!";
 
-            var regionHasClub = fileInDb.FileClubs.Any(cr => cr.ClubId== clubInDb.Id);
+            var regionHasClub = fileInDb.FileClubs.Any(cr => cr.ClubId == clubInDb.Id);
             if (!regionHasClub)
             {
                 var newFileClub = new FileClub

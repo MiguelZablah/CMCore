@@ -57,6 +57,5 @@ namespace CMCore.Data
                 .HasForeignKey(c => c.RegionId).IsRequired(false);
 
         }
-
     }
 }

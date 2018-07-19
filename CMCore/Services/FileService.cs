@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using AutoMapper;
 using CMCore.Data;
 using CMCore.DTO;
@@ -10,7 +8,6 @@ using CMCore.Helpers;
 using CMCore.Interfaces;
 using CMCore.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using File = CMCore.Models.File;
 
@@ -82,7 +79,7 @@ namespace CMCore.Services
             if (string.IsNullOrWhiteSpace(fileInDb.Description))
                 fileInDb.Description = fileDto.Description;
 
-            // So you can't change the thumbUrl
+            // So you can't change the thumbUrl and Extension
             fileDto.ThumbUrl = fileInDb.ThumbUrl;
 
             return Mapper.Map<File, FileDto>(fileInDb);
@@ -119,41 +116,16 @@ namespace CMCore.Services
             return AddEf(newFile) ? newFile : default(File);
         }
 
-        private async Task<byte[]> GetStreamFromUrl(string url)
-        {
-            using (var client = new HttpClient())
-            {
-
-                using (var result = await client.GetAsync(url))
-                {
-                    if (result.IsSuccessStatusCode)
-                    {
-                        return await result.Content.ReadAsByteArrayAsync();
-                    }
-
-                }
-            }
-            return null;
-        }
-
-        public async Task<IActionResult> DowloadFile(File fileInDb, Controller controller)
+        public string DowloadFile(File fileInDb)
         {
             if (fileInDb == null)
-                return controller.NotFound();
+                return null;
 
             var fileUrl = _awsS3Service.DowloadUrl(fileInDb.PathName, fileInDb.AwsRegion);
             if (string.IsNullOrWhiteSpace(fileUrl))
-                return controller.BadRequest("File Url not found!");
+                return null;
 
-            var contentType = _fileSettings.GetContentType(fileInDb.PathName);
-            if (string.IsNullOrWhiteSpace(contentType))
-                return controller.BadRequest("Content Type dosen't exist!");
-
-            var fileBytes = await GetStreamFromUrl(fileUrl);
-            if (fileBytes?.Length > 0)
-                return controller.File(fileBytes, contentType, fileInDb.PathName);
-
-            return controller.BadRequest("Ups! Can't get file, try latter!");
+            return fileUrl;
         }
 
         public string AddTagR(File fileInDb, FileDto fileDto)
