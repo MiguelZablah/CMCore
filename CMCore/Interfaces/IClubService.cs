@@ -9,7 +9,6 @@ namespace CMCore.Interfaces
     {
         IQueryable<Club> FindAll(string name);
         IQueryable<Club> Exist(int id);
-        IQueryable<Club> ExistName(string name);
         string Validate(ClubDto clubDto);
         string CheckSameName(string name);
         bool Erase(Club clubInDb);

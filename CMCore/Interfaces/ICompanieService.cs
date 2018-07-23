@@ -9,7 +9,6 @@ namespace CMCore.Interfaces
     {
         IQueryable<Companie> FindAll(string name);
         IQueryable<Companie> Exist(int id);
-        IQueryable<Companie> ExistName(string name);
         string Validate(CompanieDto companieDto);
         string CheckSameName(string name);
         bool Erase(Companie companieInDb);

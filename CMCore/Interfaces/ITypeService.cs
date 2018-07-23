@@ -10,7 +10,6 @@ namespace CMCore.Interfaces
     {
         IQueryable<Type> FindAll(string name);
         IQueryable<Type> Exist(int id);
-        IQueryable<Type> ExistName(string name);
         string Validate(TypeDto typeDto);
         string CheckSameName(string name);
         bool Erase(Type typeInDb);

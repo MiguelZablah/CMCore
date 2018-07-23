@@ -41,11 +41,22 @@ namespace CMCore.Services
             }
         }
 
-        public IQueryable<T> ExistName(string name)
+        private IQueryable<T> Query(bool includes)
+        {
+            var query = _dbSet.AsQueryable();
+            if (includes)
+            {
+                foreach (var property in Context.Model.FindEntityType(typeof(T)).GetNavigations())
+                    query = query.Include(property.Name);
+            }
+            return query;
+        }
+
+        public IQueryable<T> ExistName(string name, bool getIncludes = false)
         {
             try
             {
-                var resultInDb = _dbSet.Where(t => t.Name.Equals(name.ToLower())).AsQueryable();
+                var resultInDb = Query(getIncludes).Where(t => t.Name.Equals(name.ToLower()));
                 return resultInDb;
             }
             catch (Exception e)

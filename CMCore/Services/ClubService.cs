@@ -96,7 +96,7 @@ namespace CMCore.Services
 
         public string AddFileR(ClubDto clubDto, File fileInDb)
         {
-            var clubInDb = ExistName(clubDto.Name).FirstOrDefault();
+            var clubInDb = ExistName(clubDto.Name, true).FirstOrDefault();
             if (clubInDb == null)
             {
                 var createdClub = CreateNew(clubDto);
@@ -128,8 +128,7 @@ namespace CMCore.Services
             if (string.IsNullOrEmpty(clubDto.Name))
                 return "You send a null or empty Club!";
 
-            var regionHasClub = fileInDb.FileClubs.Any(cr => cr.ClubId == clubInDb.Id);
-            if (!regionHasClub)
+            if (!fileInDb.FileClubs.Any(cr => cr.ClubId == clubInDb.Id))
             {
                 var newFileClub = new FileClub
                 {

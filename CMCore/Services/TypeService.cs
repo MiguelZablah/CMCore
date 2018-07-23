@@ -47,8 +47,7 @@ namespace CMCore.Services
             if (string.IsNullOrEmpty(typeDto.Name))
                 return "You send a null or empty Type!";
 
-            var typeHasClub = clubInDb.ClubTypes.Any(cr => cr.TypeId == typenInDb.Id);
-            if (!typeHasClub)
+            if (!clubInDb.ClubTypes.Any(cr => cr.TypeId == typenInDb.Id))
             {
                 var newClubType = new ClubType
                 {

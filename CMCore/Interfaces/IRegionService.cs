@@ -9,7 +9,6 @@ namespace CMCore.Interfaces
     {
         IQueryable<Region> FindAll(string name);
         IQueryable<Region> Exist(int id);
-        IQueryable<Region> ExistName(string name);
         string Validate(RegionDto regionDto);
         string CheckSameName(string name);
         bool Erase(Region regionInDb);

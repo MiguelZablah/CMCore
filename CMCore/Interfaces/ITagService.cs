@@ -9,7 +9,6 @@ namespace CMCore.Interfaces
     {
         IQueryable<Tag> FindAll(string name);
         IQueryable<Tag> Exist(int id);
-        IQueryable<Tag> ExistName(string name);
         string Validate(TagDto tagDto);
         string CheckSameName(string name);
         bool Erase(Tag tagInDb);

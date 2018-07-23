@@ -44,7 +44,7 @@ namespace CMCore.Services
 
         public string AddClubR(RegionDto regionDto, Club clubInDb)
         {
-            var regionInDb = ExistName(regionDto.Name).FirstOrDefault();
+            var regionInDb = ExistName(regionDto.Name, true).FirstOrDefault();
             if (regionInDb == null)
             {
                 var createdRegion = CreateNew(regionDto);

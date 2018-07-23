@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using CMCore.Interfaces;
-using CMCore.Models;
 
 namespace CMCore.DTO
 {
