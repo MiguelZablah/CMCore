@@ -25,7 +25,7 @@ namespace CMCore.Services
 
         public string AddFileR(TagDto tagDto, File fileInDb)
         {
-            var tagInDb = ExistName(tagDto.Name).FirstOrDefault();
+            var tagInDb = ExistName(tagDto.Name, true).FirstOrDefault();
             if (tagInDb == null)
             {
                 var createdTag = CreateNew(tagDto);

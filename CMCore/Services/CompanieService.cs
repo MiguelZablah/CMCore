@@ -24,7 +24,7 @@ namespace CMCore.Services
 
         public string AddFileR(CompanieDto companieDto, File fileInDb)
         {
-            var companieInDb = ExistName(companieDto.Name).FirstOrDefault();
+            var companieInDb = ExistName(companieDto.Name, true).FirstOrDefault();
             if (companieInDb == null)
             {
                 var createdCompanie = new Companie
