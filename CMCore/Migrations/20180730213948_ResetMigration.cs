@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
 
 namespace CMCore.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class ResetMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,8 +12,9 @@ namespace CMCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
+                    Url = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -27,7 +26,7 @@ namespace CMCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -40,7 +39,7 @@ namespace CMCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -53,7 +52,7 @@ namespace CMCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -66,7 +65,7 @@ namespace CMCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -79,7 +78,7 @@ namespace CMCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -92,10 +91,13 @@ namespace CMCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    ExtensionId = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
+                    PathName = table.Column<string>(nullable: true),
+                    AwsRegion = table.Column<string>(nullable: true),
+                    ThumbUrl = table.Column<string>(nullable: true),
+                    ExtensionId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,9 +139,9 @@ namespace CMCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true),
-                    RegionId = table.Column<int>(nullable: false)
+                    RegionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -149,7 +151,7 @@ namespace CMCore.Migrations
                         column: x => x.RegionId,
                         principalTable: "Regions",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
