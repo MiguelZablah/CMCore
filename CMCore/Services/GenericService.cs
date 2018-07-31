@@ -68,7 +68,6 @@ namespace CMCore.Services
 
         public virtual string Validate(TDto tDto)
         {
-
             var checkName = CheckSameName(tDto.Name);
             if (checkName != null)
                 return checkName;
@@ -113,7 +112,7 @@ namespace CMCore.Services
         {
             try
             {
-                _dbSet.Add(tInDb);
+                _dbSet.AddAsync(tInDb);
                 return true;
             }
             catch (Exception e)

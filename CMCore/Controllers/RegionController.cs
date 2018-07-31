@@ -52,7 +52,7 @@ namespace CMCore.Controllers
             if (regionDto == null)
                 return BadRequest("You send a empty region");
 
-            var regionInDb = _regionService.Exist(id).FirstOrDefault();
+            var regionInDb = _regionService.Exist(id).Include(c => c.Countries).FirstOrDefault();
             if (regionInDb == null)
                 return BadRequest("Region dosen't exist!");
 
@@ -62,6 +62,10 @@ namespace CMCore.Controllers
 
             if (regionDto.Name == null)
                 regionDto.Name = regionInDb.Name;
+
+            // Clear Relationships
+            if (!_regionService.ClearRelations(regionInDb))
+                return BadRequest("Region can't be updated!");
 
             // Add countrie relacion
             var countryValMsg = _regionService.AddCountrieR(regionInDb, regionDto);

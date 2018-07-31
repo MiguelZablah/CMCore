@@ -38,7 +38,7 @@ namespace CMCore.Services
                     FileId = fileInDb.Id,
                     TagId = newTag.Id
                 };
-                Context.FileTags.Add(newFileTag);
+                Context.FileTags.AddAsync(newFileTag);
 
                 return null;
             }
@@ -54,7 +54,7 @@ namespace CMCore.Services
                     FileId = fileInDb.Id,
                     TagId = tagInDb.Id
                 };
-                Context.FileTags.Add(newFileTag);
+                Context.FileTags.AddAsync(newFileTag);
             }
 
             return null;

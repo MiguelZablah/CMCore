@@ -179,5 +179,20 @@ namespace CMCore.Services
             return null;
         }
 
+        public bool ClearRelations(File fileInDb)
+        {
+            try
+            {
+                fileInDb.FileTags.Clear();
+                fileInDb.FileClubs.Clear();
+                fileInDb.FileCompanies.Clear();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
     }
 }

@@ -18,5 +18,6 @@ namespace CMCore.Interfaces
         string AddRegionCountriR(Club clubInDb, ClubDto clubDto);
         string AddTypeR(Club clubInDb, ClubDto clubDto);
         string AddFileR(ClubDto clubDto, File fileInDb);
+        bool ClearRelations(Club clubInDb);
     }
 }

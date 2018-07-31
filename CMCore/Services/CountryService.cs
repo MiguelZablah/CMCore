@@ -39,10 +39,10 @@ namespace CMCore.Services
             if (string.IsNullOrEmpty(countrieDto.Name))
                 return "You send a null or empty countrie!";
 
-            var regionHasCountry = regionInDb.Countries.Any(cr => cr.RegionId == countrieInDb.RegionId);
+            var regionHasCountry = regionInDb.Countries.Any(cr => cr.Id == countrieInDb.Id);
             if (!regionHasCountry)
             {
-                countrieInDb.RegionId = regionInDb.Id;
+                Context.Entry(countrieInDb).Property(c => c.RegionId).CurrentValue = regionInDb.Id;
             }
 
             return null;

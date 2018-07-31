@@ -53,13 +53,17 @@ namespace CMCore.Controllers
             if (clubDto == null)
                 return BadRequest("You send an invalid club");
 
-            var clubInDb = _clubService.Exist(id).FirstOrDefault();
+            var clubInDb = _clubService.Exist(id).Include(t => t.ClubTypes).Include(r => r.ClubRegions).FirstOrDefault();
             if (clubInDb == null)
                 return BadRequest("Club dosen't exist!");
 
             var errorMsg = _clubService.CheckSameName(clubDto.Name);
             if (errorMsg != null)
                 return BadRequest(errorMsg);
+
+            // Clear Relationships
+            if (!_clubService.ClearRelations(clubInDb))
+                return BadRequest("Club can't be updated!");
 
             // Validate and Add Types
             var typesErrMsg = _clubService.AddTypeR(clubInDb, clubDto);

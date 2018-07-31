@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
@@ -57,7 +58,7 @@ namespace CMCore.Services
                     ClubId = clubInDb.Id,
                     RegionId = newRegion.Id
                 };
-                Context.ClubRegions.Add(newClubRegionRelation);
+                Context.ClubRegions.AddAsync(newClubRegionRelation);
 
                 // Add countrie relacion
                 var countryValMsg = AddCountrieR(newRegion, regionDto);
@@ -78,7 +79,7 @@ namespace CMCore.Services
                     ClubId = clubInDb.Id,
                     RegionId = regionInDb.Id
                 };
-                Context.ClubRegions.Add(newClubRegionRelation);
+                Context.ClubRegions.AddAsync(newClubRegionRelation);
             }
 
             // Add countrie relacion
@@ -87,8 +88,21 @@ namespace CMCore.Services
                 return countryValMsgg;
 
             return null;
-
         }
 
+        public bool ClearRelations(Region regionInDb)
+        {
+            try
+            {
+                regionInDb.Countries.Clear();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
+        }
     }
 }

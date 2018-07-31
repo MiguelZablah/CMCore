@@ -21,5 +21,6 @@ namespace CMCore.Interfaces
         string AddTagR(File fileInDb, FileDto fileDto);
         string AddCompanieR(File fileInDb, FileDto fileDto);
         string AddClubR(File fileInDb, FileDto fileDto);
+        bool ClearRelations(File fileInDb);
     }
 }

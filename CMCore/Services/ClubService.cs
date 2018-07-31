@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoMapper;
 using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
 using CMCore.Models.RelacionClass;
+using Microsoft.EntityFrameworkCore;
 
 namespace CMCore.Services
 {
@@ -109,7 +111,7 @@ namespace CMCore.Services
                     FileId = fileInDb.Id,
                     ClubId = newClub.Id
                 };
-                Context.FileClubs.Add(newFileClub);
+                Context.FileClubs.AddAsync(newFileClub);
 
                 // Validate and Add Types
                 var typesErrMsg = AddTypeR(newClub, clubDto);
@@ -135,7 +137,7 @@ namespace CMCore.Services
                     FileId = fileInDb.Id,
                     ClubId = clubInDb.Id
                 };
-                Context.FileClubs.Add(newFileClub);
+                Context.FileClubs.AddAsync(newFileClub);
             }
 
             // Validate and Add Types
@@ -149,6 +151,21 @@ namespace CMCore.Services
                 return regionCountriErrMsgg;
 
             return null;
+        }
+
+        public bool ClearRelations(Club clubInDb)
+        {
+            try
+            {
+                clubInDb.ClubTypes.Clear();
+                clubInDb.ClubRegions.Clear();
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
 
     }

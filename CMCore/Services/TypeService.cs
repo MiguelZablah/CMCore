@@ -39,7 +39,7 @@ namespace CMCore.Services
                     ClubId = clubInDb.Id,
                     TypeId = newType.Id
                 };
-                Context.ClubTypes.Add(newClubType);
+                Context.ClubTypes.AddAsync(newClubType);
 
                 return null;
             }
@@ -54,7 +54,7 @@ namespace CMCore.Services
                     ClubId = clubInDb.Id,
                     TypeId = typenInDb.Id
                 };
-                Context.ClubTypes.Add(newClubType);
+                Context.ClubTypes.AddAsync(newClubType);
             }
 
             return null;

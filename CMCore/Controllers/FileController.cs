@@ -71,13 +71,17 @@ namespace CMCore.Controllers
             if (fileDto == null)
                 return BadRequest("You send an invalid file");
 
-            var fileInDb = _fileService.Exist(id).FirstOrDefault();
+            var fileInDb = _fileService.Exist(id).Include(t => t.FileTags).Include(cp => cp.FileCompanies).Include(c => c.FileClubs).FirstOrDefault();
             if (fileInDb == null)
                 return BadRequest("File dosen't exist!");
 
             var errorMsg = _fileService.CheckSameName(fileDto.Name);
             if (errorMsg != null)
                 return BadRequest(errorMsg);
+
+            // Clear Relationships
+            if (!_fileService.ClearRelations(fileInDb))
+                return BadRequest("File can't be updated!");
 
             // Validate and Add Tags
             var tagErrMsg = _fileService.AddTagR(fileInDb, fileDto);

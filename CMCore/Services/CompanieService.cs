@@ -39,7 +39,7 @@ namespace CMCore.Services
                     FileId = fileInDb.Id,
                     CompanieId = newCompanie.Id
                 };
-                Context.FileCompanies.Add(newFileCompanie);
+                Context.FileCompanies.AddAsync(newFileCompanie);
 
                 return null;
             }
@@ -55,7 +55,7 @@ namespace CMCore.Services
                     FileId = fileInDb.Id,
                     CompanieId = companieInDb.Id
                 };
-                Context.FileCompanies.Add(newFileCompanie);
+                Context.FileCompanies.AddAsync(newFileCompanie);
             }
 
             return null;

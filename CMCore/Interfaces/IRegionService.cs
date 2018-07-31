@@ -17,5 +17,6 @@ namespace CMCore.Interfaces
         Region CreateNew(RegionDto regionDto);
         string AddCountrieR(Region regionInDb, RegionDto regionDto);
         string AddClubR(RegionDto regionDto, Club clubInDb);
+        bool ClearRelations(Region regionInDb);
     }
 }
