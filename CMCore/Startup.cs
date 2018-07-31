@@ -7,6 +7,7 @@ using CMCore.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,7 @@ namespace CMCore
         {
             services.AddDbContext<ContentManagerDbContext>(options =>
                 options.UseMySql(Configuration.GetConnectionString("LocalMySqlServer")));
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.Configure<FormOptions>(options =>
             {
                 options.ValueLengthLimit = int.MaxValue;

@@ -7,14 +7,13 @@ namespace CMCore
     {
         public static void Main(string[] args)
         {
-            //BuildWebHost(args).SeedDatabase().Run();
-            BuildWebHost(args).Run();
+            //CreateWebHostBuilder(args).SeedDatabase().Run();
+            CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
-                .UseKestrel(options => options.Limits.MaxRequestBodySize = null)
-                .Build();
+                .UseKestrel(options => options.Limits.MaxRequestBodySize = null);
     }
 }
