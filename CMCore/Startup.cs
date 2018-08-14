@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+using Lagersoft.OAuth;
 namespace CMCore
 {
     public class Startup
@@ -19,8 +19,9 @@ namespace CMCore
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-        }
-
+			OAuthConf.ConfigureOAuthGlobals(Configuration.GetSection("OAuth"));
+		}
+		
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.

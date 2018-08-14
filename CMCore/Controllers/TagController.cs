@@ -5,6 +5,7 @@ using AutoMapper.QueryableExtensions;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
+using Lagersoft.OAuth;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,8 @@ namespace CMCore.Controllers
     [Produces("application/json")]
     [Route("tag/")]
     [EnableCors("AllowSpecificOrigin")]
-    public class TagController : Controller
+	[OAuthorize]
+	public class TagController : Controller
     {
         private readonly ITagService _tagService;
 

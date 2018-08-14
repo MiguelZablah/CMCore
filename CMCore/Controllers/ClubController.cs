@@ -5,6 +5,7 @@ using AutoMapper.QueryableExtensions;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
+using Lagersoft.OAuth;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,8 @@ namespace CMCore.Controllers
     [Produces("application/json")]
     [Route("club/")]
     [EnableCors("AllowSpecificOrigin")]
-    public class ClubController : Controller
+	[OAuthorize]
+	public class ClubController : Controller
     {
 
         private readonly IClubService _clubService;

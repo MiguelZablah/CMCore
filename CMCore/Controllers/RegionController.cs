@@ -5,6 +5,7 @@ using AutoMapper.QueryableExtensions;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
+using Lagersoft.OAuth;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,8 @@ namespace CMCore.Controllers
     [Produces("application/json")]
     [Route("region/")]
     [EnableCors("AllowSpecificOrigin")]
-    public class RegionController : Controller
+	[OAuthorize]
+	public class RegionController : Controller
     {
         private readonly IRegionService _regionService;
 

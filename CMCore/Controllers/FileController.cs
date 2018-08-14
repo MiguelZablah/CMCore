@@ -9,13 +9,15 @@ using CMCore.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using File = CMCore.Models.File;
+using Lagersoft.OAuth;
 
 namespace CMCore.Controllers
 {
     [Produces("application/json")]
     [Route("File/")]
     [EnableCors("AllowSpecificOrigin")]
-    public class FileController : Controller
+	[OAuthorize]
+	public class FileController : Controller
     {
         private readonly IFileService _fileService;
 
