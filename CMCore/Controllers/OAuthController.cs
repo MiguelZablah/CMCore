@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lagersoft.OAuth;
 using OAUtils = Lagersoft.OAuth.Utils;
-using System.Net.Http;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace CMCore.Controllers
@@ -18,7 +13,7 @@ namespace CMCore.Controllers
 		[Route("Login")]
 		public IActionResult Login(string returnUrl)
 		{
-			var url = OAUtils.GetLoginUrl(Request.Scheme + System.Uri.SchemeDelimiter + Request.Host + returnUrl);
+			var url = OAUtils.GetLoginUrl(HttpUtility.UrlDecode(returnUrl));
 			return Json(url);
 		}
 		[Route("Logoff")]
@@ -27,14 +22,17 @@ namespace CMCore.Controllers
 			OAUtils.Logoff(token);
 			return Json("ok");
 		}
-		[Route("OAuth")]
-		public IActionResult OAuth(string code)
+		[Route("GetToken")]
+		public IActionResult GetToken(string code)
 		{
 			var token = OAUtils.GetToken(code);
-			if (token != null)
-				OAUtils.Authenticate(HttpContext, token);
 			return Json(token);
 		}
 
+		[Route("Unauthorized")]
+		public new IActionResult Unauthorized()
+		{
+			return Json("Unauthorized");
+		}
 	}
 }
