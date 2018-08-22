@@ -10,21 +10,21 @@ namespace CMCore.Controllers
 	[EnableCors("AllowSpecificOrigin")]
 	public class OAuthControlller : Controller
 	{
-		[HttpGet]
+		[HttpGet("Login")]
 		public IActionResult Login(string returnUrl)
 		{
 			var url = OAUtils.GetLoginUrl(HttpUtility.UrlDecode(returnUrl));
 			return Ok(url);
 		}
 
-		[HttpGet]
+		[HttpGet("Logoff")]
 		public IActionResult Logoff(string token)
 		{
 			OAUtils.Logoff(token);
 			return Ok("ok");
 		}
 
-		[HttpGet]
+		[HttpGet("GetToken")]
 		public IActionResult GetToken(string code)
 		{
 			var token = OAUtils.GetToken(code);
