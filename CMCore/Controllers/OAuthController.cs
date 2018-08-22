@@ -9,30 +9,32 @@ namespace CMCore.Controllers
 	[Route("OAuth/")]
 	[EnableCors("AllowSpecificOrigin")]
 	public class OAuthControlller : Controller
-    {
-		[Route("Login")]
+	{
+		[HttpGet]
 		public IActionResult Login(string returnUrl)
 		{
 			var url = OAUtils.GetLoginUrl(HttpUtility.UrlDecode(returnUrl));
-			return Json(url);
+			return Ok(url);
 		}
-		[Route("Logoff")]
+
+		[HttpGet]
 		public IActionResult Logoff(string token)
 		{
 			OAUtils.Logoff(token);
-			return Json("ok");
+			return Ok("ok");
 		}
-		[Route("GetToken")]
+
+		[HttpGet]
 		public IActionResult GetToken(string code)
 		{
 			var token = OAUtils.GetToken(code);
-			return Json(token);
+			return Ok(token);
 		}
 
-		[Route("Unauthorized")]
-		public new IActionResult Unauthorized()
+		[HttpGet("Unauthorized")]
+		public IActionResult Unauthorize()
 		{
-			return Json("Unauthorized");
+			return Unauthorized();
 		}
 	}
 }
