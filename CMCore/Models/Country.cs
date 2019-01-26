@@ -2,7 +2,7 @@
 
 namespace CMCore.Models
 {
-    public class Countrie : IEntity
+    public class Country : IEntity
     {
         public int Id { get; set; }
 

@@ -28,7 +28,7 @@ namespace CMCore.Controllers
 		[HttpGet]
 		public IActionResult Get(string name = null)
 		{
-			var countries = _countryService.FindAll(name).ProjectTo<CountrieDto>().ToList();
+			var countries = _countryService.FindAll(name).ProjectTo<CountryDto>().ToList();
 			if (!countries.Any())
 				return BadRequest("No Countries");
 
@@ -39,46 +39,46 @@ namespace CMCore.Controllers
 		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
-			var countrieInDb = _countryService.Exist(id).ProjectTo<CountrieDto>().FirstOrDefault();
-			if (countrieInDb == null)
-				return BadRequest("Country dosen't exist!");
+			var countriesInDb = _countryService.Exist(id).ProjectTo<CountryDto>().FirstOrDefault();
+			if (countriesInDb == null)
+				return BadRequest("Country doesn't exist!");
 
-			return Ok(countrieInDb);
+			return Ok(countriesInDb);
 		}
 
 		// Patch country/id
 		[HttpPatch("{id}")]
-		public async Task<IActionResult> Edit(int id, [FromBody] CountrieDto countrieDto)
+		public async Task<IActionResult> Edit(int id, [FromBody] CountryDto countryDto)
 		{
-			if (countrieDto == null)
-				return BadRequest("You send a empty countrie");
+			if (countryDto == null)
+				return BadRequest("You send a empty country");
 
-			var countrieInDb = _countryService.Exist(id).FirstOrDefault();
-			if (countrieInDb == null)
-				return BadRequest("Country dosen't exist!");
+			var countryInDb = _countryService.Exist(id).FirstOrDefault();
+			if (countryInDb == null)
+				return BadRequest("Country doesn't exist!");
 
-			var errorMsg = _countryService.CheckSameName(countrieDto.Name);
+			var errorMsg = _countryService.CheckSameName(countryDto.Name);
 			if (errorMsg != null)
 				return BadRequest(errorMsg);
 
-			var newCountrie = _countryService.Edit(countrieInDb, countrieDto);
+			var newCountry = _countryService.Edit(countryInDb, countryDto);
 
 			var saved = await _countryService.SaveEf();
 			if (!saved)
 				return BadRequest();
 
-			return Ok(_countryService.Exist(newCountrie.Id).ProjectTo<CountrieDto>().FirstOrDefault());
+			return Ok(_countryService.Exist(newCountry.Id).ProjectTo<CountryDto>().FirstOrDefault());
 		}
 
 		// Delete country/id
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> Delete(int id)
 		{
-			var countrieInDb = _countryService.Exist(id).FirstOrDefault();
-			if (countrieInDb == null)
-				return BadRequest("Country dosen't exist!");
+			var countryInDb = _countryService.Exist(id).FirstOrDefault();
+			if (countryInDb == null)
+				return BadRequest("Country doesn't exist!");
 
-			var delete = _countryService.Erase(countrieInDb);
+			var delete = _countryService.Erase(countryInDb);
 			if (!delete)
 				return BadRequest("Country not deleted!");
 
@@ -86,24 +86,24 @@ namespace CMCore.Controllers
 			if (!saved)
 				return BadRequest();
 
-			return Ok("Country Deleted: " + countrieInDb.Name);
+			return Ok("Country Deleted: " + countryInDb.Name);
 		}
 
 		// Post country/
 		[HttpPost]
-		public async Task<IActionResult> New([FromBody] CountrieDto countrieDto)
+		public async Task<IActionResult> New([FromBody] CountryDto countryDto)
 		{
-			var errorMsg = _countryService.Validate(countrieDto);
+			var errorMsg = _countryService.Validate(countryDto);
 			if (errorMsg != null)
 				return BadRequest(errorMsg);
 
-			var newCountrie = _countryService.CreateNew(countrieDto);
+			var newCountry = _countryService.CreateNew(countryDto);
 
 			var saved = await _countryService.SaveEf();
 			if (!saved)
 				return BadRequest();
 
-			return Ok(Mapper.Map<Countrie, CountrieDto>(newCountrie));
+			return Ok(Mapper.Map<Country, CountryDto>(newCountry));
 		}
 	}
 }

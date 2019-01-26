@@ -4,7 +4,7 @@ using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
-using CMCore.Models.RelacionClass;
+using CMCore.Models.RelationModel;
 
 namespace CMCore.Services
 {
@@ -27,15 +27,15 @@ namespace CMCore.Services
             return AddEf(newRegion) ? newRegion : default(Region);
         }
 
-        public string AddCountrieR(Region regionInDb, RegionDto regionDto)
+        public string AddCountryR(Region regionInDb, RegionDto regionDto)
         {
             if (regionDto.Countries != null)
             {
-                foreach (var countrie in regionDto.Countries)
+                foreach (var country in regionDto.Countries)
                 {
-                    var countrieErMsg = _countryService.AddRegionR(countrie, regionInDb);
-                    if (!string.IsNullOrWhiteSpace(countrieErMsg))
-                        return countrieErMsg;
+                    var countryErMsg = _countryService.AddRegionR(country, regionInDb);
+                    if (!string.IsNullOrWhiteSpace(countryErMsg))
+                        return countryErMsg;
                 }
                 return null;
             }
@@ -50,7 +50,7 @@ namespace CMCore.Services
             {
                 var createdRegion = CreateNew(regionDto);
                 if (createdRegion == null)
-                    return "Region couden't be created!";
+                    return "Region couldn't be created!";
 
                 var newRegion = createdRegion;
                 var newClubRegionRelation = new ClubRegion
@@ -60,8 +60,8 @@ namespace CMCore.Services
                 };
                 Context.ClubRegions.AddAsync(newClubRegionRelation);
 
-                // Add countrie relacion
-                var countryValMsg = AddCountrieR(newRegion, regionDto);
+                // Add country relation
+                var countryValMsg = AddCountryR(newRegion, regionDto);
                 if (!string.IsNullOrWhiteSpace(countryValMsg))
                     return countryValMsg;
 
@@ -82,8 +82,8 @@ namespace CMCore.Services
                 Context.ClubRegions.AddAsync(newClubRegionRelation);
             }
 
-            // Add countrie relacion
-            var countryValMsgg = AddCountrieR(regionInDb, regionDto);
+            // Add country relation
+            var countryValMsgg = AddCountryR(regionInDb, regionDto);
             if (!string.IsNullOrWhiteSpace(countryValMsgg))
                 return countryValMsgg;
 

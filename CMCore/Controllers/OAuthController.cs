@@ -8,7 +8,7 @@ namespace CMCore.Controllers
 	[Produces("application/json")]
 	[Route("OAuth/")]
 	[EnableCors("AllowSpecificOrigin")]
-	public class OAuthControlller : Controller
+	public class OAuthController : Controller
 	{
 		[HttpGet("Login")]
 		public IActionResult Login(string returnUrl)

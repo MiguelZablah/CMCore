@@ -32,7 +32,7 @@ namespace CMCore.Controllers
 		{
 			var files = _fileService.FindAll(name).ProjectTo<FileDto>().ToList();
 			if (!files.Any())
-				return BadRequest("No Files");
+				return Ok("No Files");
 
 			return Ok(files);
 		}
@@ -43,7 +43,7 @@ namespace CMCore.Controllers
 		{
 			var fileInDb = _fileService.Exist(id).ProjectTo<FileDto>().FirstOrDefault();
 			if (fileInDb == null)
-				return BadRequest("File dosen't exist!");
+				return BadRequest("File doesn't exist!");
 
 			return Ok(fileInDb);
 		}
@@ -59,7 +59,7 @@ namespace CMCore.Controllers
 			if (string.IsNullOrEmpty(fileInDb.PathName))
 				return BadRequest("File path name not found");
 
-			var preSignUrl = _fileService.DowloadFile(fileInDb);
+			var preSignUrl = _fileService.DownloadFile(fileInDb);
 			if (string.IsNullOrWhiteSpace(preSignUrl))
 				return BadRequest("File can't download right know!");
 
@@ -75,7 +75,7 @@ namespace CMCore.Controllers
 
 			var fileInDb = _fileService.Exist(id).Include(t => t.FileTags).Include(cp => cp.FileCompanies).Include(c => c.FileClubs).FirstOrDefault();
 			if (fileInDb == null)
-				return BadRequest("File dosen't exist!");
+				return BadRequest("File doesn't exist!");
 
 			var errorMsg = _fileService.CheckSameName(fileDto.Name);
 			if (errorMsg != null)
@@ -91,9 +91,9 @@ namespace CMCore.Controllers
 				return BadRequest(tagErrMsg);
 
 			// Validate and Add Companies
-			var companieErrMsg = _fileService.AddCompanieR(fileInDb, fileDto);
-			if (!string.IsNullOrWhiteSpace(companieErrMsg))
-				return BadRequest(companieErrMsg);
+			var companyErrMsg = _fileService.AddCompanyR(fileInDb, fileDto);
+			if (!string.IsNullOrWhiteSpace(companyErrMsg))
+				return BadRequest(companyErrMsg);
 
 			// Validate and Add Clubs
 			var clubsErrMsg = _fileService.AddClubR(fileInDb, fileDto);
@@ -115,7 +115,7 @@ namespace CMCore.Controllers
 		{
 			var fileInDb = await _fileService.Exist(id).FirstOrDefaultAsync();
 			if (fileInDb == null)
-				return BadRequest("File dosen't exist!");
+				return BadRequest("File doesn't exist!");
 
 			var deleteFile = _fileService.EraseFile(fileInDb);
 			if (!deleteFile)

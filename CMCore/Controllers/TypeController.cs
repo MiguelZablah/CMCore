@@ -41,7 +41,7 @@ namespace CMCore.Controllers
 		{
 			var typeInDb = _typeService.Exist(id).ProjectTo<TagDto>().FirstOrDefault();
 			if (typeInDb == null)
-				return BadRequest("Type dosen't exist!");
+				return BadRequest("Type doesn't exist!");
 
 			return Ok(typeInDb);
 		}
@@ -51,11 +51,11 @@ namespace CMCore.Controllers
 		public async Task<IActionResult> Edit(int id, [FromBody] TypeDto typeDto)
 		{
 			if (typeDto == null)
-				return BadRequest("You send a empty countrie");
+				return BadRequest("You send a empty country");
 
 			var typeInDb = _typeService.Exist(id).FirstOrDefault();
 			if (typeInDb == null)
-				return BadRequest("Type dosen't exist!");
+				return BadRequest("Type doesn't exist!");
 
 			var errorMsg = _typeService.CheckSameName(typeDto.Name);
 			if (errorMsg != null)
@@ -76,7 +76,7 @@ namespace CMCore.Controllers
 		{
 			var typeInDb = _typeService.Exist(id).FirstOrDefault();
 			if (typeInDb == null)
-				return BadRequest("Type dosen't exist!");
+				return BadRequest("Type doesn't exist!");
 
 			var delete = _typeService.Erase(typeInDb);
 			if (!delete)

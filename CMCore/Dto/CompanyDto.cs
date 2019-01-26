@@ -2,7 +2,7 @@
 
 namespace CMCore.DTO
 {
-    public class CompanieDto : IEntity
+    public class CompanyDto : IEntity
     {
         public int Id { get; set; }
 

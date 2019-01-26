@@ -17,9 +17,9 @@ namespace CMCore.Interfaces
         Task<bool> SaveEf();
         FileDto Edit(File fileInDb, FileDto fileDto);
         File CreateNew(IFormFile file, string fileName);
-        string DowloadFile(File fileInDb);
+        string DownloadFile(File fileInDb);
         string AddTagR(File fileInDb, FileDto fileDto);
-        string AddCompanieR(File fileInDb, FileDto fileDto);
+        string AddCompanyR(File fileInDb, FileDto fileDto);
         string AddClubR(File fileInDb, FileDto fileDto);
         bool ClearRelations(File fileInDb);
     }

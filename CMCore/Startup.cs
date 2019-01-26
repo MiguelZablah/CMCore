@@ -21,8 +21,8 @@ namespace CMCore
 			Configuration = configuration;
 			OAuthConf.ConfigureOAuthGlobals(Configuration.GetSection("OAuth"));
 		}
-		
-		public IConfiguration Configuration { get; }
+
+		private IConfiguration Configuration { get; }
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
@@ -52,7 +52,7 @@ namespace CMCore
 			// Services for api
 			services.AddTransient(typeof(GenericService<,>));
 			services.AddTransient<ITagService, TagService>();
-			services.AddTransient<ICompanieService, CompanieService>();
+			services.AddTransient<ICompanyService, CompanyService>();
 			services.AddTransient<ICountryService, CountryService>();
 			services.AddTransient<IRegionService, RegionService>();
 			services.AddTransient<ITypeService, TypeService>();

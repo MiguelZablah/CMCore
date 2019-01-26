@@ -1,6 +1,6 @@
-﻿using CMCore.Models.RelacionClass;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CMCore.Interfaces;
+using CMCore.Models.RelationModel;
 
 namespace CMCore.Models
 {

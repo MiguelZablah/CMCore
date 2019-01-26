@@ -16,19 +16,19 @@ namespace CMCore.Services
     public class FileService : GenericService<File, FileDto>, IFileService
     {
         private readonly ITagService _tagService;
-        private readonly ICompanieService _companieService;
+        private readonly ICompanyService _companyService;
         private readonly IClubService _clubService;
         private readonly FileSettings _fileSettings;
         private readonly IAwsS3Service _awsS3Service;
 
         public FileService(ContentManagerDbContext context, IOptions<FileSettings> fileSettings, 
             ITagService tagService, 
-            ICompanieService companieService, 
+            ICompanyService companyService, 
             IClubService clubService, IAwsS3Service awsS3Service) 
             : base(context)
         {
             _tagService = tagService;
-            _companieService = companieService;
+            _companyService = companyService;
             _clubService = clubService;
             _awsS3Service = awsS3Service;
             _fileSettings = fileSettings.Value;
@@ -116,16 +116,13 @@ namespace CMCore.Services
             return AddEf(newFile) ? newFile : default(File);
         }
 
-        public string DowloadFile(File fileInDb)
+        public string DownloadFile(File fileInDb)
         {
             if (fileInDb == null)
                 return null;
 
-            var fileUrl = _awsS3Service.DowloadUrl(fileInDb.PathName, fileInDb.AwsRegion);
-            if (string.IsNullOrWhiteSpace(fileUrl))
-                return null;
-
-            return fileUrl;
+            var fileUrl = _awsS3Service.DownloadUrl(fileInDb.PathName, fileInDb.AwsRegion);
+            return string.IsNullOrWhiteSpace(fileUrl) ? null : fileUrl;
         }
 
         public string AddTagR(File fileInDb, FileDto fileDto)
@@ -145,15 +142,15 @@ namespace CMCore.Services
             return null;
         }
 
-        public string AddCompanieR(File fileInDb, FileDto fileDto)
+        public string AddCompanyR(File fileInDb, FileDto fileDto)
         {
             if (fileDto.Companies != null)
             {
-                foreach (var companie in fileDto.Companies)
+                foreach (var company in fileDto.Companies)
                 {
-                    var companieErrMsg = _companieService.AddFileR(companie, fileInDb);
-                    if (!string.IsNullOrWhiteSpace(companieErrMsg))
-                        return companieErrMsg;
+                    var companyErrMsg = _companyService.AddFileR(company, fileInDb);
+                    if (!string.IsNullOrWhiteSpace(companyErrMsg))
+                        return companyErrMsg;
                 }
 
                 return null;

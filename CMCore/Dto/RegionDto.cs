@@ -9,6 +9,6 @@ namespace CMCore.DTO
 
         public string Name { get; set; }
 
-        public IList<CountrieDto> Countries { get; set; }
+        public IList<CountryDto> Countries { get; set; }
     }
 }

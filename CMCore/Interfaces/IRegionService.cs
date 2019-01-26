@@ -15,7 +15,7 @@ namespace CMCore.Interfaces
         Task<bool> SaveEf();
         RegionDto Edit(Region regionInDb, RegionDto regionDto);
         Region CreateNew(RegionDto regionDto);
-        string AddCountrieR(Region regionInDb, RegionDto regionDto);
+        string AddCountryR(Region regionInDb, RegionDto regionDto);
         string AddClubR(RegionDto regionDto, Club clubInDb);
         bool ClearRelations(Region regionInDb);
     }

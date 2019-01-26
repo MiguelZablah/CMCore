@@ -1,5 +1,5 @@
 ﻿using CMCore.Models;
-using CMCore.Models.RelacionClass;
+using CMCore.Models.RelationModel;
 using Microsoft.EntityFrameworkCore;
 using Type = CMCore.Models.Type;
 
@@ -7,7 +7,7 @@ namespace CMCore.Data
 {
     public class ContentManagerDbContext : DbContext
     {
-        public ContentManagerDbContext(DbContextOptions<ContentManagerDbContext> options)
+        public ContentManagerDbContext(DbContextOptions options)
             : base(options)
         {
 
@@ -16,14 +16,14 @@ namespace CMCore.Data
         public DbSet<File> Files { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Extension> Extensions { get; set; }
-        public DbSet<Companie> Companies { get; set; }
+        public DbSet<Company> Companies { get; set; }
         public DbSet<Club> Clubs { get; set; }
-        public DbSet<Countrie> Countries { get; set; }
+        public DbSet<Country> Countries { get; set; }
         public DbSet<Region> Regions { get; set; }
         public DbSet<Type> Types { get; set; }
         public DbSet<FileClub> FileClubs { get; set; }
         public DbSet<FileTag> FileTags { get; set; }
-        public DbSet<FileCompanie> FileCompanies { get; set; }
+        public DbSet<FileCompany> FileCompanies { get; set; }
         public DbSet<ClubType> ClubTypes { get; set; }
         public DbSet<ClubRegion> ClubRegions { get; set; }
 
@@ -36,8 +36,8 @@ namespace CMCore.Data
             modelBuilder.Entity<FileClub>()
                 .HasKey(fc => new { fc.FileId, fc.ClubId });
 
-            modelBuilder.Entity<FileCompanie>()
-                .HasKey(fco => new { fco.FileId, fco.CompanieId });
+            modelBuilder.Entity<FileCompany>()
+                .HasKey(fco => new { fco.FileId, CompanieId = fco.CompanyId });
 
             modelBuilder.Entity<ClubType>()
                 .HasKey(ct => new { ct.ClubId, ct.TypeId });

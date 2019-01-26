@@ -13,7 +13,7 @@ namespace CMCore.Services
         protected readonly ContentManagerDbContext Context;
         private readonly DbSet<T> _dbSet;
 
-        public GenericService(ContentManagerDbContext context)
+        protected GenericService(ContentManagerDbContext context)
         {
             Context = context;
             _dbSet = Context.Set<T>();
@@ -52,7 +52,7 @@ namespace CMCore.Services
             return query;
         }
 
-        public IQueryable<T> ExistName(string name, bool getIncludes = false)
+        protected IQueryable<T> ExistName(string name, bool getIncludes = false)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace CMCore.Services
             return null;
         }
 
-        public bool CompareString(string a, string b)
+        protected bool CompareString(string a, string b)
         {
             if (string.IsNullOrWhiteSpace(a) || string.IsNullOrWhiteSpace(b))
                 return false;
@@ -108,7 +108,7 @@ namespace CMCore.Services
             }
         }
 
-        public bool AddEf(T tInDb)
+        protected bool AddEf(T tInDb)
         {
             try
             {

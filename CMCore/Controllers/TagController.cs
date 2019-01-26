@@ -41,7 +41,7 @@ namespace CMCore.Controllers
 		{
 			var tagInDb = _tagService.Exist(id).ProjectTo<TagDto>().FirstOrDefault();
 			if (tagInDb == null)
-				return BadRequest("Tag dosen't exist!");
+				return BadRequest("Tag doesn't exist!");
 
 			return Ok(tagInDb);
 		}
@@ -51,11 +51,11 @@ namespace CMCore.Controllers
 		public async Task<IActionResult> Edit(int id, [FromBody] TagDto tagDto)
 		{
 			if (ReferenceEquals(tagDto, default(TagDto)))
-				return BadRequest("You send a empty countrie");
+				return BadRequest("You send a empty country");
 
 			var tagInDb = _tagService.Exist(id).FirstOrDefault();
 			if (tagInDb == null)
-				return BadRequest("Tag dosen't exist!");
+				return BadRequest("Tag doesn't exist!");
 
 			var errorMsg = _tagService.CheckSameName(tagDto.Name);
 			if (!string.IsNullOrWhiteSpace(errorMsg))
@@ -76,7 +76,7 @@ namespace CMCore.Controllers
 		{
 			var tagInDb = _tagService.Exist(id).FirstOrDefault();
 			if (tagInDb == null)
-				return BadRequest("Tag dosen't exist!");
+				return BadRequest("Tag doesn't exist!");
 
 			var delete = _tagService.Erase(tagInDb);
 			if (!delete)

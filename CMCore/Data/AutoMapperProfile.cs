@@ -16,7 +16,7 @@ namespace CMCore.Data
                 cfg.CreateMap<File, FileDto>()
                     .ForMember(dto => dto.Tags, opt => opt.MapFrom(ft => ft.FileTags.Select(t => t.Tag)))
                     .ForMember(dto => dto.Clubs, opt => opt.MapFrom(fc => fc.FileClubs.Select(c => c.Club)))
-                    .ForMember(dto => dto.Companies, opt => opt.MapFrom(fco => fco.FileCompanies.Select(c => c.Companie)))
+                    .ForMember(dto => dto.Companies, opt => opt.MapFrom(fco => fco.FileCompanies.Select(c => c.Company)))
                     .ForMember(dto => dto.Extension, opt => opt.MapFrom(fco => fco.Extension.Name));
 
                 cfg.CreateMap<Tag, TagDto>();
@@ -27,13 +27,13 @@ namespace CMCore.Data
 
                 cfg.CreateMap<Region, RegionDto>();
 
-                cfg.CreateMap<Countrie, CountrieDto>();
+                cfg.CreateMap<Country, CountryDto>();
 
                 cfg.CreateMap<Type, TypeDto>();
 
                 cfg.CreateMap<Extension, ExtensionDto>();
 
-                cfg.CreateMap<Companie, CompanieDto>();
+                cfg.CreateMap<Company, CompanyDto>();
 
                 // Dto to Domain
                 cfg.CreateMap<FileDto, File>()
@@ -48,7 +48,7 @@ namespace CMCore.Data
                 cfg.CreateMap<RegionDto, Region>()
                     .ForMember(r => r.Id, opt => opt.Ignore());
 
-                cfg.CreateMap<CountrieDto, Countrie>()
+                cfg.CreateMap<CountryDto, Country>()
                     .ForMember(c => c.Id, opt => opt.Ignore());
 
                 cfg.CreateMap<TypeDto, Type>()
@@ -57,7 +57,7 @@ namespace CMCore.Data
                 cfg.CreateMap<ExtensionDto, Extension>()
                     .ForMember(e => e.Id, opt => opt.Ignore());
 
-                cfg.CreateMap<CompanieDto, Companie>()
+                cfg.CreateMap<CompanyDto, Company>()
                     .ForMember(c => c.Id, opt => opt.Ignore());
             });
 

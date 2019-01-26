@@ -1,6 +1,6 @@
 ﻿namespace CMCore.DTO
 {
-    public class ExtensionDto
+    public abstract class ExtensionDto
     {
         public int Id { get; set; }
 

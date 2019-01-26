@@ -19,7 +19,7 @@ namespace CMCore.DTO
 
         public IList<TagDto> Tags { get; set; }
 
-        public IList<CompanieDto> Companies { get; set; }
+        public IList<CompanyDto> Companies { get; set; }
 
         public IList<ClubDto> Clubs { get; set; }
     }

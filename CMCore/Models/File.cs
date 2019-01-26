@@ -1,6 +1,6 @@
-﻿using CMCore.Models.RelacionClass;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CMCore.Interfaces;
+using CMCore.Models.RelationModel;
 
 namespace CMCore.Models
 {
@@ -9,7 +9,7 @@ namespace CMCore.Models
         public File()
         {
             FileTags = new List<FileTag>();
-            FileCompanies = new List<FileCompanie>();
+            FileCompanies = new List<FileCompany>();
             FileClubs = new List<FileClub>();
         }
 
@@ -30,7 +30,7 @@ namespace CMCore.Models
         public int ExtensionId { get; set; }
         public Extension Extension { get; set; }
 
-        public IList<FileCompanie> FileCompanies { get; set; }
+        public IList<FileCompany> FileCompanies { get; set; }
 
         public IList<FileClub> FileClubs { get; set; }
     }

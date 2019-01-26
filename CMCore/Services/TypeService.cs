@@ -3,7 +3,7 @@ using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
-using CMCore.Models.RelacionClass;
+using CMCore.Models.RelationModel;
 using Type = CMCore.Models.Type;
 
 namespace CMCore.Services
@@ -26,12 +26,12 @@ namespace CMCore.Services
 
         public string AddClubR(TypeDto typeDto, Club clubInDb)
         {
-            var typenInDb = ExistName(typeDto.Name).FirstOrDefault();
-            if (typenInDb == null)
+            var typeInDb = ExistName(typeDto.Name).FirstOrDefault();
+            if (typeInDb == null)
             {
                 var createdType = CreateNew(typeDto);
                 if (createdType == null)
-                    return "Type couden't be created!";
+                    return "Type couldn't be created!";
 
                 var newType = createdType;
                 var newClubType = new ClubType
@@ -47,12 +47,12 @@ namespace CMCore.Services
             if (string.IsNullOrEmpty(typeDto.Name))
                 return "You send a null or empty Type!";
 
-            if (!clubInDb.ClubTypes.Any(cr => cr.TypeId == typenInDb.Id))
+            if (!clubInDb.ClubTypes.Any(cr => cr.TypeId == typeInDb.Id))
             {
                 var newClubType = new ClubType
                 {
                     ClubId = clubInDb.Id,
-                    TypeId = typenInDb.Id
+                    TypeId = typeInDb.Id
                 };
                 Context.ClubTypes.AddAsync(newClubType);
             }

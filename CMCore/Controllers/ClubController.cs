@@ -43,7 +43,7 @@ namespace CMCore.Controllers
 		{
 			var clubInDb = _clubService.Exist(id).ProjectTo<ClubDto>().FirstOrDefault();
 			if (clubInDb == null)
-				return BadRequest("Club dosen't exist!");
+				return BadRequest("Club doesn't exist!");
 
 			return Ok(clubInDb);
 		}
@@ -57,7 +57,7 @@ namespace CMCore.Controllers
 
 			var clubInDb = _clubService.Exist(id).Include(t => t.ClubTypes).Include(r => r.ClubRegions).FirstOrDefault();
 			if (clubInDb == null)
-				return BadRequest("Club dosen't exist!");
+				return BadRequest("Club doesn't exist!");
 
 			var errorMsg = _clubService.CheckSameName(clubDto.Name);
 			if (errorMsg != null)
@@ -72,10 +72,10 @@ namespace CMCore.Controllers
 			if (!string.IsNullOrWhiteSpace(typesErrMsg))
 				return BadRequest(typesErrMsg);
 
-			// Validate and Add Region and/or countrie
-			var regionCountriErrMsg = _clubService.AddRegionCountriR(clubInDb, clubDto);
-			if (!string.IsNullOrWhiteSpace(regionCountriErrMsg))
-				return BadRequest(regionCountriErrMsg);
+			// Validate and Add Region and/or country
+			var regionCountryErrMsg = _clubService.AddRegionCountryR(clubInDb, clubDto);
+			if (!string.IsNullOrWhiteSpace(regionCountryErrMsg))
+				return BadRequest(regionCountryErrMsg);
 
 			clubDto = _clubService.Edit(clubInDb, clubDto);
 
@@ -92,7 +92,7 @@ namespace CMCore.Controllers
 		{
 			var clubInDb = _clubService.Exist(id).Include(r => r.ClubRegions).Include(r => r.ClubTypes).FirstOrDefault();
 			if (clubInDb == null)
-				return BadRequest("Club dosen't exist!");
+				return BadRequest("Club doesn't exist!");
 
 			var delete = _clubService.Erase(clubInDb);
 			if (!delete)
@@ -121,9 +121,9 @@ namespace CMCore.Controllers
 				return BadRequest(typesErrMsg);
 
 			// Validate and Add Region and/or club
-			var regionCountriErrMsg = _clubService.AddRegionCountriR(newClub, clubDto);
-			if (!string.IsNullOrWhiteSpace(regionCountriErrMsg))
-				return BadRequest(regionCountriErrMsg);
+			var regionCountryErrMsg = _clubService.AddRegionCountryR(newClub, clubDto);
+			if (!string.IsNullOrWhiteSpace(regionCountryErrMsg))
+				return BadRequest(regionCountryErrMsg);
 
 			var saved = await _clubService.SaveEf();
 			if (!saved)

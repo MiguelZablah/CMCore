@@ -42,7 +42,7 @@ namespace CMCore.Controllers
 		{
 			var regionInDb = _regionService.Exist(id).ProjectTo<RegionDto>().FirstOrDefault();
 			if (regionInDb == null)
-				return BadRequest("Region dosen't exist!");
+				return BadRequest("Region doesn't exist!");
 
 			return Ok(regionInDb);
 		}
@@ -56,7 +56,7 @@ namespace CMCore.Controllers
 
 			var regionInDb = _regionService.Exist(id).Include(c => c.Countries).FirstOrDefault();
 			if (regionInDb == null)
-				return BadRequest("Region dosen't exist!");
+				return BadRequest("Region doesn't exist!");
 
 			var errorMsg = _regionService.CheckSameName(regionDto.Name);
 			if (errorMsg != null)
@@ -69,8 +69,8 @@ namespace CMCore.Controllers
 			if (!_regionService.ClearRelations(regionInDb))
 				return BadRequest("Region can't be updated!");
 
-			// Add countrie relacion
-			var countryValMsg = _regionService.AddCountrieR(regionInDb, regionDto);
+			// Add country relation
+			var countryValMsg = _regionService.AddCountryR(regionInDb, regionDto);
 			if (countryValMsg != null)
 				return BadRequest(countryValMsg);
 
@@ -89,7 +89,7 @@ namespace CMCore.Controllers
 		{
 			var regionInDb = _regionService.Exist(id).Include(r => r.Countries).FirstOrDefault();
 			if (regionInDb == null)
-				return BadRequest("Region dosen't exist!");
+				return BadRequest("Region doesn't exist!");
 
 			var delete = _regionService.Erase(regionInDb);
 			if (!delete)
@@ -112,8 +112,8 @@ namespace CMCore.Controllers
 
 			var newRegion = _regionService.CreateNew(regionDto);
 
-			// Add countrie relacion
-			var countryValMsg = _regionService.AddCountrieR(newRegion, regionDto);
+			// Add country relation
+			var countryValMsg = _regionService.AddCountryR(newRegion, regionDto);
 			if (countryValMsg != null)
 				return BadRequest(countryValMsg);
 
