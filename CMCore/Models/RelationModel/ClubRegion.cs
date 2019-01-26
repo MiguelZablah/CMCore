@@ -1,4 +1,4 @@
-﻿namespace CMCore.Models.RelacionClass
+﻿namespace CMCore.Models.RelationModel
 {
     public class ClubRegion
     {

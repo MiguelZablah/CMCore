@@ -7,14 +7,14 @@ namespace CMCore.Interfaces
 {
     public interface ICountryService
     {
-        IQueryable<Countrie> FindAll(string name);
-        IQueryable<Countrie> Exist(int id);
-        string Validate(CountrieDto countrieDto);
+        IQueryable<Country> FindAll(string name);
+        IQueryable<Country> Exist(int id);
+        string Validate(CountryDto countryDto);
         string CheckSameName(string name);
-        bool Erase(Countrie countrieInDb);
+        bool Erase(Country countryInDb);
         Task<bool> SaveEf();
-        CountrieDto Edit(Countrie countrieInDb, CountrieDto countrieDto);
-        Countrie CreateNew(CountrieDto countrieDto);
-        string AddRegionR(CountrieDto countrieDto, Region regionInDb);
+        CountryDto Edit(Country countryInDb, CountryDto countryDto);
+        Country CreateNew(CountryDto countryDto);
+        string AddRegionR(CountryDto countryDto, Region regionInDb);
     }
 }

@@ -5,8 +5,7 @@ using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
-using CMCore.Models.RelacionClass;
-using Microsoft.EntityFrameworkCore;
+using CMCore.Models.RelationModel;
 
 namespace CMCore.Services
 {
@@ -45,12 +44,9 @@ namespace CMCore.Services
                 return checkName;
 
             if (string.IsNullOrWhiteSpace(clubDto.Name))
-                return "You send am invalid name!";
+                return "You send an invalid name!";
 
-            if (Context.Clubs.Any(c => c.Url.Equals(clubDto.Url)))
-                return "A club with that url already exist!";
-
-            return null;
+            return Context.Clubs.Any(c => c.Url.Equals(clubDto.Url)) ? "A club with that url already exist!" : null;
         }
 
         public Club CreateNew(ClubDto clubDto)
@@ -64,15 +60,15 @@ namespace CMCore.Services
             return AddEf(newClub) ? newClub : default(Club);
         }
 
-        public string AddRegionCountriR(Club clubInDb, ClubDto clubDto)
+        public string AddRegionCountryR(Club clubInDb, ClubDto clubDto)
         {
             if (clubDto.Regions != null)
             {
                 foreach (var region in clubDto.Regions)
                 {
-                    var countrieErMsg = _regionService.AddClubR(region, clubInDb);
-                    if (!string.IsNullOrWhiteSpace(countrieErMsg))
-                        return countrieErMsg;
+                    var countryErMsg = _regionService.AddClubR(region, clubInDb);
+                    if (!string.IsNullOrWhiteSpace(countryErMsg))
+                        return countryErMsg;
                 }
                 return null;
             }
@@ -118,13 +114,9 @@ namespace CMCore.Services
                 if (!string.IsNullOrWhiteSpace(typesErrMsg))
                     return typesErrMsg;
 
-                // Validate and Add Region and/or countrie
-                var regionCountriErrMsg = AddRegionCountriR(newClub, clubDto);
-                if (!string.IsNullOrWhiteSpace(regionCountriErrMsg))
-                    return regionCountriErrMsg;
-
-
-                return null;
+                // Validate and Add Region and/or country
+                var regionCountryErrMsg = AddRegionCountryR(newClub, clubDto);
+                return !string.IsNullOrWhiteSpace(regionCountryErrMsg) ? regionCountryErrMsg : null;
             }
 
             if (string.IsNullOrEmpty(clubDto.Name))
@@ -141,16 +133,13 @@ namespace CMCore.Services
             }
 
             // Validate and Add Types
-            var typesErrMsgg = AddTypeR(clubInDb, clubDto);
-            if (!string.IsNullOrWhiteSpace(typesErrMsgg))
-                return typesErrMsgg;
+            var errMsg = AddTypeR(clubInDb, clubDto);
+            if (!string.IsNullOrWhiteSpace(errMsg))
+                return errMsg;
 
-            // Validate and Add Region and/or countrie
-            var regionCountriErrMsgg = AddRegionCountriR(clubInDb, clubDto);
-            if (!string.IsNullOrWhiteSpace(regionCountriErrMsgg))
-                return regionCountriErrMsgg;
-
-            return null;
+            // Validate and Add Region and/or country
+            var rCountryErrMsg = AddRegionCountryR(clubInDb, clubDto);
+            return !string.IsNullOrWhiteSpace(rCountryErrMsg) ? rCountryErrMsg : null;
         }
 
         public bool ClearRelations(Club clubInDb)

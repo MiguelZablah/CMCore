@@ -2,7 +2,7 @@
 
 namespace CMCore.DTO
 {
-    public class CountrieDto : IEntity
+    public class CountryDto : IEntity
     {
         public int Id { get; set; }
 

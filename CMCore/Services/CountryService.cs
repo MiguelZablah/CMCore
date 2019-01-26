@@ -6,43 +6,43 @@ using CMCore.Models;
 
 namespace CMCore.Services
 {
-    public class CountryService : GenericService<Countrie, CountrieDto>, ICountryService
+    public class CountryService : GenericService<Country, CountryDto>, ICountryService
     {
         public CountryService(ContentManagerDbContext context) : base(context)
         {
         }
 
-        public Countrie CreateNew(CountrieDto countrieDto)
+        public Country CreateNew(CountryDto countryDto)
         {
-            var newCountrie = new Countrie
+            var newCountry = new Country
             {
-                Name = countrieDto.Name
+                Name = countryDto.Name
             };
 
-            return AddEf(newCountrie) ? newCountrie : default(Countrie);
+            return AddEf(newCountry) ? newCountry : default(Country);
         }
 
-        public string AddRegionR(CountrieDto countrieDto, Region regionInDb)
+        public string AddRegionR(CountryDto countryDto, Region regionInDb)
         {
-            var countrieInDb = ExistName(countrieDto.Name).FirstOrDefault();
-            if (countrieInDb == null)
+            var countryInDb = ExistName(countryDto.Name).FirstOrDefault();
+            if (countryInDb == null)
             {
-                var createCountry = new Countrie
+                var createCountry = new Country
                 {
-                    Name = countrieDto.Name,
+                    Name = countryDto.Name,
                     RegionId = regionInDb.Id
                 };
                 AddEf(createCountry);
                 return null;
             }
 
-            if (string.IsNullOrEmpty(countrieDto.Name))
-                return "You send a null or empty countrie!";
+            if (string.IsNullOrEmpty(countryDto.Name))
+                return "You send a null or empty country!";
 
-            var regionHasCountry = regionInDb.Countries.Any(cr => cr.Id == countrieInDb.Id);
+            var regionHasCountry = regionInDb.Countries.Any(cr => cr.Id == countryInDb.Id);
             if (!regionHasCountry)
             {
-                Context.Entry(countrieInDb).Property(c => c.RegionId).CurrentValue = regionInDb.Id;
+                Context.Entry(countryInDb).Property(c => c.RegionId).CurrentValue = regionInDb.Id;
             }
 
             return null;

@@ -15,7 +15,7 @@ namespace CMCore.Interfaces
         Task<bool> SaveEf();
         ClubDto Edit(Club clubInDb, ClubDto clubDto);
         Club CreateNew(ClubDto clubDto);
-        string AddRegionCountriR(Club clubInDb, ClubDto clubDto);
+        string AddRegionCountryR(Club clubInDb, ClubDto clubDto);
         string AddTypeR(Club clubInDb, ClubDto clubDto);
         string AddFileR(ClubDto clubDto, File fileInDb);
         bool ClearRelations(Club clubInDb);

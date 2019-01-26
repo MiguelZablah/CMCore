@@ -14,7 +14,7 @@ namespace CMCore.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
+                .HasAnnotation("ProductVersion", "2.1.4-rtm-31024")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("CMCore.Models.Club", b =>
@@ -31,7 +31,7 @@ namespace CMCore.Migrations
                     b.ToTable("Clubs");
                 });
 
-            modelBuilder.Entity("CMCore.Models.Companie", b =>
+            modelBuilder.Entity("CMCore.Models.Company", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -43,7 +43,7 @@ namespace CMCore.Migrations
                     b.ToTable("Companies");
                 });
 
-            modelBuilder.Entity("CMCore.Models.Countrie", b =>
+            modelBuilder.Entity("CMCore.Models.Country", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -107,7 +107,7 @@ namespace CMCore.Migrations
                     b.ToTable("Regions");
                 });
 
-            modelBuilder.Entity("CMCore.Models.RelacionClass.ClubRegion", b =>
+            modelBuilder.Entity("CMCore.Models.RelationModel.ClubRegion", b =>
                 {
                     b.Property<int>("ClubId");
 
@@ -120,7 +120,7 @@ namespace CMCore.Migrations
                     b.ToTable("ClubRegions");
                 });
 
-            modelBuilder.Entity("CMCore.Models.RelacionClass.ClubType", b =>
+            modelBuilder.Entity("CMCore.Models.RelationModel.ClubType", b =>
                 {
                     b.Property<int>("ClubId");
 
@@ -133,7 +133,7 @@ namespace CMCore.Migrations
                     b.ToTable("ClubTypes");
                 });
 
-            modelBuilder.Entity("CMCore.Models.RelacionClass.FileClub", b =>
+            modelBuilder.Entity("CMCore.Models.RelationModel.FileClub", b =>
                 {
                     b.Property<int>("FileId");
 
@@ -146,20 +146,20 @@ namespace CMCore.Migrations
                     b.ToTable("FileClubs");
                 });
 
-            modelBuilder.Entity("CMCore.Models.RelacionClass.FileCompanie", b =>
+            modelBuilder.Entity("CMCore.Models.RelationModel.FileCompany", b =>
                 {
                     b.Property<int>("FileId");
 
-                    b.Property<int>("CompanieId");
+                    b.Property<int>("CompanyId");
 
-                    b.HasKey("FileId", "CompanieId");
+                    b.HasKey("FileId", "CompanyId");
 
-                    b.HasIndex("CompanieId");
+                    b.HasIndex("CompanyId");
 
                     b.ToTable("FileCompanies");
                 });
 
-            modelBuilder.Entity("CMCore.Models.RelacionClass.FileTag", b =>
+            modelBuilder.Entity("CMCore.Models.RelationModel.FileTag", b =>
                 {
                     b.Property<int>("FileId");
 
@@ -196,7 +196,7 @@ namespace CMCore.Migrations
                     b.ToTable("Types");
                 });
 
-            modelBuilder.Entity("CMCore.Models.Countrie", b =>
+            modelBuilder.Entity("CMCore.Models.Country", b =>
                 {
                     b.HasOne("CMCore.Models.Region", "Region")
                         .WithMany("Countries")
@@ -211,7 +211,7 @@ namespace CMCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CMCore.Models.RelacionClass.ClubRegion", b =>
+            modelBuilder.Entity("CMCore.Models.RelationModel.ClubRegion", b =>
                 {
                     b.HasOne("CMCore.Models.Club", "Club")
                         .WithMany("ClubRegions")
@@ -224,7 +224,7 @@ namespace CMCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CMCore.Models.RelacionClass.ClubType", b =>
+            modelBuilder.Entity("CMCore.Models.RelationModel.ClubType", b =>
                 {
                     b.HasOne("CMCore.Models.Club", "Club")
                         .WithMany("ClubTypes")
@@ -237,7 +237,7 @@ namespace CMCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CMCore.Models.RelacionClass.FileClub", b =>
+            modelBuilder.Entity("CMCore.Models.RelationModel.FileClub", b =>
                 {
                     b.HasOne("CMCore.Models.Club", "Club")
                         .WithMany("FileClubs")
@@ -250,11 +250,11 @@ namespace CMCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CMCore.Models.RelacionClass.FileCompanie", b =>
+            modelBuilder.Entity("CMCore.Models.RelationModel.FileCompany", b =>
                 {
-                    b.HasOne("CMCore.Models.Companie", "Companie")
+                    b.HasOne("CMCore.Models.Company", "Company")
                         .WithMany("FileCompanies")
-                        .HasForeignKey("CompanieId")
+                        .HasForeignKey("CompanyId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CMCore.Models.File", "File")
@@ -263,7 +263,7 @@ namespace CMCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CMCore.Models.RelacionClass.FileTag", b =>
+            modelBuilder.Entity("CMCore.Models.RelationModel.FileTag", b =>
                 {
                     b.HasOne("CMCore.Models.File", "File")
                         .WithMany("FileTags")

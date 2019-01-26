@@ -33,7 +33,7 @@ namespace CMCore.Services
             return tuple;
         }
 
-        public string DowloadUrl(string fileName, string fileRegion)
+        public string DownloadUrl(string fileName, string fileRegion)
         {
             if (!CheckRequiredFields(fileName))
                 return null;
@@ -43,10 +43,7 @@ namespace CMCore.Services
                 newS3Client = RegionEndpoint.GetBySystemName(fileRegion);
 
             var urlString = GeneratePreSignedUrl(fileName, newS3Client);
-            if(string.IsNullOrWhiteSpace(urlString))
-                return null;
-
-            return urlString;
+            return string.IsNullOrWhiteSpace(urlString) ? null : urlString;
         }
 
         public string DeleteFile(string fileName, string fileRegion, bool deleteThumb)

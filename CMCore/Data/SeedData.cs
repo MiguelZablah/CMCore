@@ -1,10 +1,10 @@
 ﻿using CMCore.Models;
-using CMCore.Models.RelacionClass;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using CMCore.Models.RelationModel;
 using Type = CMCore.Models.Type;
 
 namespace CMCore.Data
@@ -38,25 +38,25 @@ namespace CMCore.Data
 
             if (!context.Clubs.Any())
             {
-                context.Clubs.Add(new Club { Name = "Bebes Paradise", Url = "bebesParadise.com"});
+                context.Clubs.Add(new Club { Name = "Bebe Paradise", Url = "bebeParadise.com"});
                 context.SaveChanges();
             }
 
             if (!context.Regions.Any())
             {
-                context.Regions.Add(new Region { Name = "Cenam" });
+                context.Regions.Add(new Region { Name = "CENAM" });
                 context.SaveChanges();
             }
 
             if (!context.Companies.Any())
             {
-                context.Companies.Add(new Companie { Name = "SVA" });
+                context.Companies.Add(new Company { Name = "SVA" });
                 context.SaveChanges();
             }
 
             if (!context.Countries.Any())
             {
-                context.Countries.Add(new Countrie { Name = "Costa Rica", RegionId = 1 });
+                context.Countries.Add(new Country { Name = "Costa Rica", RegionId = 1 });
                 context.SaveChanges();
             }
 
@@ -93,7 +93,7 @@ namespace CMCore.Data
 
             if (!context.FileCompanies.Any())
             {
-                context.FileCompanies.Add(new FileCompanie { FileId = 1, CompanieId = 1 });
+                context.FileCompanies.Add(new FileCompany { FileId = 1, CompanyId = 1 });
                 context.SaveChanges();
             }
 

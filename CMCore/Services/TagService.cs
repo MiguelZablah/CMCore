@@ -3,7 +3,7 @@ using CMCore.Data;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
-using CMCore.Models.RelacionClass;
+using CMCore.Models.RelationModel;
 
 namespace CMCore.Services
 {

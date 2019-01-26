@@ -1,6 +1,6 @@
-﻿using CMCore.Models.RelacionClass;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using CMCore.Interfaces;
+using CMCore.Models.RelationModel;
 
 namespace CMCore.Models
 {
@@ -9,7 +9,7 @@ namespace CMCore.Models
         public Region()
         {
             ClubRegions = new List<ClubRegion>();
-            Countries = new List<Countrie>();
+            Countries = new List<Country>();
         }
 
         public int Id { get; set; }
@@ -18,6 +18,6 @@ namespace CMCore.Models
 
         public IList<ClubRegion> ClubRegions { get; set; }
 
-        public IList<Countrie> Countries { get; set; }
+        public IList<Country> Countries { get; set; }
     }
 }

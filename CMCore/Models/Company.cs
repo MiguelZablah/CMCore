@@ -4,17 +4,17 @@ using CMCore.Models.RelationModel;
 
 namespace CMCore.Models
 {
-    public class Type : IEntity
+    public class Company : IEntity
     {
-        public Type()
+        public Company()
         {
-            ClubTypes = new List<ClubType>();
+            FileCompanies = new List<FileCompany>();
         }
 
         public int Id { get; set; }
 
         public string Name { get; set; }
 
-        public IList<ClubType> ClubTypes { get; set; }
+        public IList<FileCompany> FileCompanies { get; set; }
     }
 }
