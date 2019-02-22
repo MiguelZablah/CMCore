@@ -4,7 +4,6 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using CMCore.DTO;
 using CMCore.Interfaces;
-using Lagersoft.OAuth;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Type = CMCore.Models.Type;
@@ -14,7 +13,6 @@ namespace CMCore.Controllers
 	[Produces("application/json")]
 	[Route("type/")]
 	[EnableCors("AllowSpecificOrigin")]
-	[OAuthorize]
 	public class TypeController : Controller
 	{
 		private readonly ITypeService _typeService;

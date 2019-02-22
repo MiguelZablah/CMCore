@@ -5,7 +5,6 @@ using AutoMapper.QueryableExtensions;
 using CMCore.DTO;
 using CMCore.Interfaces;
 using CMCore.Models;
-using Lagersoft.OAuth;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +13,6 @@ namespace CMCore.Controllers
 	[Produces("application/json")]
 	[Route("Company/")]
 	[EnableCors("AllowSpecificOrigin")]
-	[OAuthorize]
 	public class CompanyController : Controller
 	{
 		private readonly ICompanyService _companyService;
