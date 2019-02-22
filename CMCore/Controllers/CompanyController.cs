@@ -16,17 +16,19 @@ namespace CMCore.Controllers
 	public class CompanyController : Controller
 	{
 		private readonly ICompanyService _companyService;
+		private readonly IMapper _mapper;
 
-		public CompanyController(ICompanyService companyService)
+		public CompanyController(ICompanyService companyService, IMapper mapper)
 		{
 			_companyService = companyService;
+			_mapper = mapper;
 		}
 
 		// GET company/
 		[HttpGet]
 		public IActionResult Get(string name = null)
 		{
-			var companies = _companyService.FindAll(name).ProjectTo<CompanyDto>().ToList();
+			var companies = _companyService.FindAll(name).ProjectTo<CompanyDto>(_mapper.ConfigurationProvider).ToList();
 
 			if (!companies.Any())
 				return BadRequest("No Companies");
@@ -38,7 +40,7 @@ namespace CMCore.Controllers
 		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
-			var companyInDb = _companyService.Exist(id).ProjectTo<CompanyDto>().FirstOrDefault();
+			var companyInDb = _companyService.Exist(id).ProjectTo<CompanyDto>(_mapper.ConfigurationProvider).FirstOrDefault();
 			if (companyInDb == null)
 				return BadRequest("Company doesn't exist!");
 
@@ -66,7 +68,7 @@ namespace CMCore.Controllers
 			if (!saved)
 				return BadRequest();
 
-			return Ok(_companyService.Exist(newCompany.Id).ProjectTo<CompanyDto>().FirstOrDefault());
+			return Ok(_companyService.Exist(newCompany.Id).ProjectTo<CompanyDto>(_mapper.ConfigurationProvider).FirstOrDefault());
 		}
 
 		// DELETE company/id

@@ -17,17 +17,19 @@ namespace CMCore.Controllers
 	public class RegionController : Controller
 	{
 		private readonly IRegionService _regionService;
+		private readonly IMapper _mapper;
 
-		public RegionController(IRegionService regionService)
+		public RegionController(IRegionService regionService, IMapper mapper)
 		{
 			_regionService = regionService;
+			_mapper = mapper;
 		}
 
 		// GET region/
 		[HttpGet]
 		public IActionResult Get(string name = null)
 		{
-			var regions = _regionService.FindAll(name).ProjectTo<RegionDto>().ToList();
+			var regions = _regionService.FindAll(name).ProjectTo<RegionDto>(_mapper.ConfigurationProvider).ToList();
 			if (!regions.Any())
 				return BadRequest("No Regions");
 
@@ -38,7 +40,7 @@ namespace CMCore.Controllers
 		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
-			var regionInDb = _regionService.Exist(id).ProjectTo<RegionDto>().FirstOrDefault();
+			var regionInDb = _regionService.Exist(id).ProjectTo<RegionDto>(_mapper.ConfigurationProvider).FirstOrDefault();
 			if (regionInDb == null)
 				return BadRequest("Region doesn't exist!");
 
@@ -78,7 +80,7 @@ namespace CMCore.Controllers
 			if (!saved)
 				return BadRequest();
 
-			return Ok(_regionService.Exist(newRegion.Id).ProjectTo<RegionDto>().FirstOrDefault());
+			return Ok(_regionService.Exist(newRegion.Id).ProjectTo<RegionDto>(_mapper.ConfigurationProvider).FirstOrDefault());
 		}
 
 		// Delete region/id

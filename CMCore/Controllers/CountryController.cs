@@ -16,17 +16,19 @@ namespace CMCore.Controllers
 	public class CountryController : Controller
 	{
 		private readonly ICountryService _countryService;
+		private readonly IMapper _mapper;
 
-		public CountryController(ICountryService countryService)
+		public CountryController(ICountryService countryService, IMapper mapper)
 		{
 			_countryService = countryService;
+			_mapper = mapper;
 		}
 
 		// GET country/
 		[HttpGet]
 		public IActionResult Get(string name = null)
 		{
-			var countries = _countryService.FindAll(name).ProjectTo<CountryDto>().ToList();
+			var countries = _countryService.FindAll(name).ProjectTo<CountryDto>(_mapper.ConfigurationProvider).ToList();
 			if (!countries.Any())
 				return BadRequest("No Countries");
 
@@ -37,7 +39,7 @@ namespace CMCore.Controllers
 		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
-			var countriesInDb = _countryService.Exist(id).ProjectTo<CountryDto>().FirstOrDefault();
+			var countriesInDb = _countryService.Exist(id).ProjectTo<CountryDto>(_mapper.ConfigurationProvider).FirstOrDefault();
 			if (countriesInDb == null)
 				return BadRequest("Country doesn't exist!");
 
@@ -65,7 +67,7 @@ namespace CMCore.Controllers
 			if (!saved)
 				return BadRequest();
 
-			return Ok(_countryService.Exist(newCountry.Id).ProjectTo<CountryDto>().FirstOrDefault());
+			return Ok(_countryService.Exist(newCountry.Id).ProjectTo<CountryDto>(_mapper.ConfigurationProvider).FirstOrDefault());
 		}
 
 		// Delete country/id

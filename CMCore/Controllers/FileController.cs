@@ -18,9 +18,11 @@ namespace CMCore.Controllers
 	public class FileController : Controller
 	{
 		private readonly IFileService _fileService;
+		private readonly IMapper _mapper;
 
-		public FileController(IFileService fileService)
+		public FileController(IFileService fileService, IMapper mapper)
 		{
+			_mapper = mapper;
 			_fileService = fileService;
 		}
 
@@ -28,7 +30,7 @@ namespace CMCore.Controllers
 		[HttpGet]
 		public IActionResult Get(string name = null)
 		{
-			var files = _fileService.FindAll(name).ProjectTo<FileDto>().ToList();
+			var files = _fileService.FindAll(name).ProjectTo<FileDto>(_mapper.ConfigurationProvider).ToList();
 			if (!files.Any())
 				return Ok("No Files");
 
@@ -39,7 +41,7 @@ namespace CMCore.Controllers
 		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
-			var fileInDb = _fileService.Exist(id).ProjectTo<FileDto>().FirstOrDefault();
+			var fileInDb = _fileService.Exist(id).ProjectTo<FileDto>(_mapper.ConfigurationProvider).FirstOrDefault();
 			if (fileInDb == null)
 				return BadRequest("File doesn't exist!");
 
@@ -71,7 +73,10 @@ namespace CMCore.Controllers
 			if (fileDto == null)
 				return BadRequest("You send an invalid file");
 
-			var fileInDb = _fileService.Exist(id).Include(t => t.FileTags).Include(cp => cp.FileCompanies).Include(c => c.FileClubs).FirstOrDefault();
+			var fileInDb = _fileService.Exist(id)
+				.Include(t => t.FileTags)
+				.Include(cp => cp.FileCompanies)
+				.Include(c => c.FileClubs).FirstOrDefault();
 			if (fileInDb == null)
 				return BadRequest("File doesn't exist!");
 
@@ -104,7 +109,7 @@ namespace CMCore.Controllers
 			if (!saved)
 				return BadRequest("File can't be save!");
 
-			return Ok(_fileService.Exist(fileDto.Id).ProjectTo<FileDto>().FirstOrDefault());
+			return Ok(_fileService.Exist(fileDto.Id).ProjectTo<FileDto>(_mapper.ConfigurationProvider).FirstOrDefault());
 		}
 
 		// DELETE File/id

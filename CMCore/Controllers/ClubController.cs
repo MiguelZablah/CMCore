@@ -18,17 +18,19 @@ namespace CMCore.Controllers
 	{
 
 		private readonly IClubService _clubService;
+		private readonly IMapper _mapper;
 
-		public ClubController(IClubService clubService)
+		public ClubController(IClubService clubService, IMapper mapper)
 		{
 			_clubService = clubService;
+			_mapper = mapper;
 		}
 
 		// GET club/
 		[HttpGet]
 		public IActionResult Get(string name = null)
 		{
-			var clubs = _clubService.FindAll(name).ProjectTo<ClubDto>().ToList();
+			var clubs = _clubService.FindAll(name).ProjectTo<ClubDto>(_mapper.ConfigurationProvider).ToList();
 			if (!clubs.Any())
 				return BadRequest("No Clubs");
 
@@ -39,7 +41,7 @@ namespace CMCore.Controllers
 		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
-			var clubInDb = _clubService.Exist(id).ProjectTo<ClubDto>().FirstOrDefault();
+			var clubInDb = _clubService.Exist(id).ProjectTo<ClubDto>(_mapper.ConfigurationProvider).FirstOrDefault();
 			if (clubInDb == null)
 				return BadRequest("Club doesn't exist!");
 
@@ -53,7 +55,9 @@ namespace CMCore.Controllers
 			if (clubDto == null)
 				return BadRequest("You send an invalid club");
 
-			var clubInDb = _clubService.Exist(id).Include(t => t.ClubTypes).Include(r => r.ClubRegions).FirstOrDefault();
+			var clubInDb = _clubService.Exist(id)
+				.Include(t => t.ClubTypes)
+				.Include(r => r.ClubRegions).FirstOrDefault();
 			if (clubInDb == null)
 				return BadRequest("Club doesn't exist!");
 
@@ -81,14 +85,16 @@ namespace CMCore.Controllers
 			if (!saved)
 				return BadRequest();
 
-			return Ok(_clubService.Exist(clubDto.Id).ProjectTo<ClubDto>().FirstOrDefault());
+			return Ok(_clubService.Exist(clubDto.Id).ProjectTo<ClubDto>(_mapper.ConfigurationProvider).FirstOrDefault());
 		}
 
 		// Delete club/id
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> Delete(int id)
 		{
-			var clubInDb = _clubService.Exist(id).Include(r => r.ClubRegions).Include(r => r.ClubTypes).FirstOrDefault();
+			var clubInDb = _clubService.Exist(id)
+				.Include(r => r.ClubRegions)
+				.Include(r => r.ClubTypes).FirstOrDefault();
 			if (clubInDb == null)
 				return BadRequest("Club doesn't exist!");
 

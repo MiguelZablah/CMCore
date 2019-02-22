@@ -16,17 +16,19 @@ namespace CMCore.Controllers
 	public class TypeController : Controller
 	{
 		private readonly ITypeService _typeService;
+		private readonly IMapper _mapper;
 
-		public TypeController(ITypeService typeService)
+		public TypeController(ITypeService typeService, IMapper mapper)
 		{
 			_typeService = typeService;
+			_mapper = mapper;
 		}
 
 		// GET type/
 		[HttpGet]
 		public IActionResult Get(string name = null)
 		{
-			var types = _typeService.FindAll(name).ProjectTo<TypeDto>().ToList();
+			var types = _typeService.FindAll(name).ProjectTo<TypeDto>(_mapper.ConfigurationProvider).ToList();
 			if (!types.Any())
 				return BadRequest("No Types");
 
@@ -37,7 +39,7 @@ namespace CMCore.Controllers
 		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
-			var typeInDb = _typeService.Exist(id).ProjectTo<TagDto>().FirstOrDefault();
+			var typeInDb = _typeService.Exist(id).ProjectTo<TagDto>(_mapper.ConfigurationProvider).FirstOrDefault();
 			if (typeInDb == null)
 				return BadRequest("Type doesn't exist!");
 
@@ -65,7 +67,7 @@ namespace CMCore.Controllers
 			if (!saved)
 				return BadRequest();
 
-			return Ok(_typeService.Exist(newType.Id).ProjectTo<TagDto>().FirstOrDefault());
+			return Ok(_typeService.Exist(newType.Id).ProjectTo<TagDto>(_mapper.ConfigurationProvider).FirstOrDefault());
 		}
 
 		// DELETE type/delete/id

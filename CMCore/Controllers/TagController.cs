@@ -16,17 +16,19 @@ namespace CMCore.Controllers
 	public class TagController : Controller
 	{
 		private readonly ITagService _tagService;
+		private readonly IMapper _mapper;
 
-		public TagController(ITagService tagService)
+		public TagController(ITagService tagService, IMapper mapper)
 		{
 			_tagService = tagService;
+			_mapper = mapper;
 		}
 
 		// GET tag/
 		[HttpGet]
 		public IActionResult Get(string name = null)
 		{
-			var tags = _tagService.FindAll(name).ProjectTo<TagDto>().ToList();
+			var tags = _tagService.FindAll(name).ProjectTo<TagDto>(_mapper.ConfigurationProvider).ToList();
 			if (!tags.Any())
 				return BadRequest("No Tags");
 
@@ -37,7 +39,7 @@ namespace CMCore.Controllers
 		[HttpGet("{id}")]
 		public IActionResult Get(int id)
 		{
-			var tagInDb = _tagService.Exist(id).ProjectTo<TagDto>().FirstOrDefault();
+			var tagInDb = _tagService.Exist(id).ProjectTo<TagDto>(_mapper.ConfigurationProvider).FirstOrDefault();
 			if (tagInDb == null)
 				return BadRequest("Tag doesn't exist!");
 
@@ -65,7 +67,7 @@ namespace CMCore.Controllers
 			if (!saved)
 				return BadRequest();
 
-			return Ok(_tagService.Exist(newTag.Id).ProjectTo<TagDto>().FirstOrDefault());
+			return Ok(_tagService.Exist(newTag.Id).ProjectTo<TagDto>(_mapper.ConfigurationProvider).FirstOrDefault());
 		}
 
 		// DELETE tag/id
