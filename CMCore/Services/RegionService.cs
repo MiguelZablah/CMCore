@@ -83,11 +83,10 @@ namespace CMCore.Services
             }
 
             // Add country relation
-            var countryValMsgg = AddCountryR(regionInDb, regionDto);
-            if (!string.IsNullOrWhiteSpace(countryValMsgg))
-                return countryValMsgg;
-
-            return null;
+            var countryValMessage = AddCountryR(regionInDb, regionDto);
+            return !string.IsNullOrWhiteSpace(countryValMessage)
+                ? countryValMessage
+                : null;
         }
 
         public bool ClearRelations(Region regionInDb)
