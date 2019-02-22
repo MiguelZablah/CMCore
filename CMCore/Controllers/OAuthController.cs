@@ -32,6 +32,7 @@ namespace CMCore.Controllers
 		}
 
 		[HttpGet("Unauthorized")]
+		// ReSharper disable once IdentifierTypo
 		public IActionResult Unauthorize()
 		{
 			return Unauthorized();
