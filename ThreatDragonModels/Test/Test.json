@@ -1,0 +1,22 @@
+{
+  "summary": {
+    "title": "Test",
+    "owner": "miguel",
+    "description": "Todo está mal"
+  },
+  "detail": {
+    "contributors": [
+      {
+        "name": "dieguis"
+      }
+    ],
+    "diagrams": [
+      {
+        "title": "diagrama",
+        "thumbnail": "./public/content/images/thumbnail.jpg",
+        "id": 0
+      }
+    ],
+    "reviewer": "tony"
+  }
+}
