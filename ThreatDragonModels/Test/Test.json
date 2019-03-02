@@ -30,26 +30,17 @@
               "angle": 0,
               "id": "00c82f64-524f-4c96-9c02-160302c2a075",
               "z": 1,
-              "hasOpenThreats": true,
-              "threats": [
-                {
-                  "ruleId": "87bc37e2-798e-4d68-bb96-feb1da26da48",
-                  "title": "Generic repudiation threat",
-                  "type": "Repudiation",
-                  "status": "Open",
-                  "severity": "Medium",
-                  "description": "A generic repudiation threat"
-                }
-              ],
+              "hasOpenThreats": false,
+              "threats": [],
               "attrs": {
                 ".element-shape": {
-                  "class": "element-shape hasOpenThreats isInScope"
+                  "class": "element-shape hasNoOpenThreats isInScope"
                 },
                 "text": {
                   "text": "process 0"
                 },
                 ".element-text": {
-                  "class": "element-text hasOpenThreats isInScope"
+                  "class": "element-text hasNoOpenThreats isInScope"
                 }
               }
             },
